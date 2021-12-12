@@ -1,0 +1,276 @@
+---
+title: "Matrix Algebra"
+author: "Matteo Courthoud"
+type: book
+weight: 1
+date: 2021-10-29
+bibliography: references.bib
+link-citations: true
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    transition: 0
+    slide_level: 3
+    css: custom.css
+  ml_notebook: 
+    toc: true
+    toc_depth: 2
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    toc_collapsed: true
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+---
+
+## Basics
+
+### Matrix Definition
+
+A real $n \times m$ matrix $A$ is an array 
+
+$$
+  A=
+  \begin{bmatrix}
+  a_{11} & a_{12} & \dots  & a_{1m} \newline
+  a_{21} & a_{22} & \dots  & a_{2m} \newline
+  \vdots & \vdots & \ddots & \vdots \newline
+  a_{n1} & a_{n2} & \dots  & a_{nm}
+  \end{bmatrix}
+$$
+
+We write $[A]_ {ij} = a_ {ij}$ to indicate the $(i,j)$-element of $A$.
+
+> We will usually take the convention that a real vector $x \in \mathbb R^n$ is identified with an $n \times 1$ matrix.
+
+The $n \times n$ **identity matrix** $I_n$ is given by	
+$$
+  [I_n] _ {ij} = \begin{cases} 1 \ \ \ \text{if} \ i=j \newline
+  0 \ \ \ \text{if} \ i \neq j \end{cases}
+$$
+
+
+
+### Fundamental Operations
+
+1. Two $n \times m$ matrices, $A,B$, are added element-wise so that $[A+B]_{ij} = [A] _{ij} + [B] _{ij}$.
+2. A matrix $A$ can be multiplied by a scalar $c\in \mathbb{R}$ in which case we set $[cA]_{ij} = c[A] _{ij}$.  
+3. An $n \times m$ matrix $A$ can be multiplied with an $m \times p$ matrix $B$.  
+4. The product $AB$ is defined according to the rule $[AB] _ {ij} = \sum_{k=1}^m [A] _{ik} [B] _{kj}$.
+5. An $n \times n$ matrix is invertible if there exists a matrix $B$ such that $AB=I$.  In this case, we use the notational convention of writing $B = A^{-1}$. 
+6. Matrix transposition is defined by $[A'] _{ij} = [A] _{ji}$.
+
+
+
+### Trace and Determinant
+
+The **trace** of a square matrix $A$ with dimension $n \times n$ is $\text{tr}(A) = \sum_{i=1}^n a_{ii}$. 
+
+The **determinant** of a square $n \times n$ matrix A is defined according to one of the following three (equivalent) definitions. 
+
+1. Recursively as $det(A) = \sum_{i=1}^n a_{ij} (-1)^{i+j} det([A]_{-i,-j})$ where $[A]_{-i,-j}$ is the matrix obtained by deleting the $i$th row and the $j$th column.
+2. $A \mapsto det(A)$ under the unique alternating multilinear map on $n \times n$ matrices such that $I \mapsto 1$.
+
+
+
+### Linear Independence
+
+Vectors $x_1,...,x_k$ are **linearly independent** if the only solution to the equation $b_1x_1 + ... + b_k x_k=0, \ b_j \in \mathbb R$, is $b_1=b_2=...=b_k=0$. 
+
+### Useful Identities
+
+- $(A+B)' =A'+B'$
+- $(AB)C = A(BC)$
+- $A(B+C) = AB+AC$
+- $(AB') = B'A'$
+- $(A^{-1})' = (A')^{-1}$
+- $(AB)^{-1} = B^{-1}A^{-1}$
+- $\text{tr}(cA) = c\text{tr}(A)$
+- $\text{tr}(A+B) = \text{tr}(A) + \text{tr}(B)$
+- $\text{tr}(AB) =\text{tr}(BA)$
+- $det(I)=1$
+- $det(cA) = c^ndet(A)$ if  $A$ is $n \times n$ and $c \in \mathbb R$
+- $det(A) = det(A')$
+- $det(AB) = det(A)det(B)$
+- $det(A^{-1}) = (det(A))^{-1}$
+- $A^{-1}$ exists iff $det(A) \neq 0$
+- $rank(A) = rank(A') = rank(A'A) = rank(AA')$
+- $A^{-1}$ exists iff $rank(A)=n$ for $A$ $n \times n$
+- $rank(AB) \leq \min \lbrace rank(A), rank(B) \rbrace$ 
+
+
+
+### Matrix Rank
+
+The **rank** of a matrix, $rank(A)$ is equal to the maximal number of linearly independent rows for $A$. 
+
+Let $A$ be an $n \times n$ matrix. The $n \times 1$ vector $x \neq 0$ is an **eigenvector** of $A$ with corresponding **eigenvalue** $\lambda$ is $Ax = \lambda x$.
+
+
+
+### Definitions
+
+1. A matrix $A$ is diagonal if $[A]_ {ij} \neq 0$ only if $i=j$.
+2. An $n \times n$  matrix $A$ is orthogonal if $A'A = I$ 
+3. A matrix $A$ is symmetric if $[A]_ {ij} = [A]_ {ji}$.
+4. An $n \times n$ matrix $A$ is idempotent if $A^2=A$.
+5. The matrix of zeros ($[A]_ {ij} =0$ for each $i,j$) is simply denoted 0.
+6. An $n \times n$ matrix $A$ is nilpotent if $A^k=0$ for some integer $k>0$.
+
+## Spectral Decomposition
+
+### Spectral Theorem
+
+**Theorem**:
+Let $A$ be an $n \times n$ symmetric matrix.  Then $A$ can be factored as $A = C \Lambda C'$ where $C$ is orthogonal and $\Lambda$ is diagonal.
+
+If we postmultiply $A$ by $C$, we get
+
+- $AC = C \Lambda C'C$ and
+- $AC = C \Lambda$.	
+
+> This is a matrix equation which can be split into columns. The $i$th column of the equation reads $A c_i = \lambda_i c_i$ which corresponds to the definition of eigenvalues and eigenvectors. So if the decomposition exists, then $C$ is the eigenvector matrix and $\Lambda$ contains the eigenvalues.	
+
+
+
+### Rank and Trace
+
+**Theorem**: 
+The rank of a symmetric matrix equals the number of non zero eigenvalues.
+
+**Proof**: 
+$rank(A) = rank(C\Lambda C') = rank(\Lambda) = | \lbrace i: \lambda_i \neq 0 \rbrace |$.
+$$\tag*{$\blacksquare$}$$
+
+**Theorem**: 
+The nonzero eigenvalues of $AA'$ and $A'A$ are identical.
+
+**Theorem**: 
+The trace of a symmetric matrix equals the sum of its eignevalues. 
+
+**Proof**: 
+$tr(A) = tr(C \Lambda C') = tr((C \Lambda)C') = tr(C'C \Lambda) = tr(\Lambda) = \sum_ {i=1}^n \lambda_i.$
+$$\tag*{$\blacksquare$}$$
+
+**Theorem**: 
+The determinant of a symmetric matrix equals the product of its eignevalues. 
+
+**Proof**: 
+$det(A) = det(C \Lambda C') = det(C)det(\Lambda)det(C') = det(C)det(C')det(\Lambda) = det(CC') det(\Lambda) = det(I)det(\Lambda) = det(\Lambda) = \prod_ {i=1}^n \lambda_i.$
+$$\tag*{$\blacksquare$}$$
+
+### Eigenvalues
+
+**Theorem**: 
+For any symmetric matrix $A$, the eigenvalues of $A^2$ are the square of the eignevalues of $A$, and the eigenvectors are the same.
+
+**Proof**: 
+$A = C \Lambda C' \implies A^2 = C \Lambda C' C \Lambda C' = C \Lambda I \Lambda C' = C \Lambda^2 C'$
+$$\tag*{$\blacksquare$}$$
+
+**Theorem**: For any symmetric matrix $A$, and any integer $k>0$, the eigenvalues of $A^k$ are the $k$th power of the eigenvalues of $A$, and the eigenvectors are the same. 
+
+**Theorem**: 
+Any square symmetric matrix $A$ with positive eigenvalues can be written as the product of a lower triangular matrix $L$ and its (upper triangular) transpose $L' = U$. That is $A = LU = LL'$
+
+> Note that
+$$
+  A = LL' = LU = U'U  = (L')^{-1}L^{-1} = U^{-1}(U')^{-1}
+$$
+where $L^{-1}$  is lower triangular and $U^{ -1}$ is upper trianguar. You can check this for the $2 \times 2$ case. Also note that the validity of the theorem can be extended to symmetric matrices with non- negative eigenvalues by a limiting argument. However, then the proof is not constructive anymore. 
+
+
+
+## Quadratic Forms and Definite Matrices
+
+### Definition
+
+A **quadratic form** in the $n \times n$ matrix $A$ and $n \times 1$ vector $x$ is defined by the scalar $x'Ax$.
+
+1. $A$ is negative definite (ND) if for each $x \neq 0$, $x'Ax < 0$
+2. $A$ is negative semidefinite (NSD) if for each $x \neq 0$, $x'Ax \leq 0$
+3. $A$ is positive definite (PD) if for each $x \neq 0$, $x'Ax > 0$
+4. $A$ is positive semidefinite (PSD) if for each $x \neq 0$, $x'Ax \geq 0$
+
+
+
+### Equivalence
+
+**Theorem**: 
+Let $A$ be a symmetric matrix. Then $A$ is PD(ND) $\iff$ all of its eigenvalues are positive (negative).
+
+Some more results:
+
+1. If a symmetric matrix $A$ is PD (PSD, ND, NSD), then $\text{det}(A) >(\geq,<,\leq) 0$.
+2. If symmetric matrix $A$ is PD (ND) then $A^{-1}$  is symmetric PD (ND).
+3. The identity matrix is PD (since all eigenvalues are equal to 1).
+4. Every symmetric idempotent matrix is PSD (since the eigenvalues are only 0 or 1). 
+
+**Theorem**: 
+If $A$ is $n\times k$ with $n>k$ and $rank(A)=k$, then $A'A$ is PD and $AA'$ is PSD.
+
+The **semidefinite partial order** is defined by $A \geq B$ iff $A-B$ is PSD.
+
+**Theorem**: 
+Let $A$, $B$ be symmetric,square , PD, conformable.  Then $A-B$ is PD iff $A^{-1}-B^{-1}$ is PD.
+
+## Matrix Calculus
+
+### Comformable Matrices
+
+We first define matrices blockwise when they are conformable.  In particular, we assume that if $A_1, A_2, A_3, A_4$ are matrices with appropriate dimensions then the matrix 
+$$
+	A = \begin{bmatrix} A_1 & A_1 \newline
+	A_3 & A_4 \end{bmatrix}
+$$
+is defined in the obvious way. 
+
+
+
+### Matrix Functions
+
+Let $F: \mathbb R^m \times \mathbb R^n \rightarrow \mathbb R^p \times \mathbb R^q$ be a matrix valued function.  More precisely, given a real  $m \times n$ matrix $X$, $F(X)$ returns the $p \times q$ matrix   
+$$
+\begin{bmatrix}
+	f_ {11}(X) & ... & f_ {1q}(X) \newline \vdots & \ddots & \vdots \newline
+	f_ {p1}(X)& ... & f_ {pq}(X)
+	\end{bmatrix}
+$$
+
+
+
+### Matrix Derivatives
+
+The derivative of $F$ with respect to the matrix $X$ is the $mp \times nq$ matrix 
+$$
+	\frac{\partial F(X)}{\partial X} = \begin{bmatrix}
+	\frac{\partial F(X)}{\partial x_ {11}} & ... & \frac{\partial F(X)}{\partial x_ {1n}} \newline \vdots & \ddots & \vdots \newline
+	\frac{\partial F(X)}{\partial x_ {m1}} & ... & \frac{\partial F(X)}{\partial x_ {mn}}
+	\end{bmatrix}
+$$
+where each $\frac{\partial F(X)}{\partial x_ {ij}}$ is a $p\times q$ matrix given by  
+$$
+	\frac{\partial F(X)}{\partial x_ {ij}} = \begin{bmatrix}
+	\frac{\partial f_ {11}(X)}{\partial x_ {ij}} & ... & \frac{\partial f_ {1q}(X)}{\partial x_ {ij}} \newline
+	\vdots & \ddots & \vdots \newline
+	\frac{\partial f_ {p1}(X)}{\partial x_ {ij}} & ... & \frac{\partial f_ {pq}(X)}{\partial x_ {ij}}
+	\end{bmatrix}
+$$
+The most important case is when $F: \mathbb R^n \rightarrow \mathbb R$ since this simplifies the derivation of the least squares estimator.  Also, the trickiest thing is to make sure that dimensions are correct. 
+
+
+
+### Useful Results in Matrix Calculus
+
+1. $\frac{\partial b'x}{\partial x}= b$ for $dim(b) = dim(x)$
+2. $\frac{\partial B'x}{\partial x}= B$ for arbitrary, conformable $B$
+3. $\frac{\partial B'x}{\partial x'}= B'$ for arbitrary, conformable $B$
+4. $\frac{\partial x'Ax}{\partial x} = (A + A')x$
+5. $\frac{\partial x'Ax}{\partial A} = xx'$ 
+6. $\frac{\partial x'Ax}{\partial x} = det(A) (A^{-1})'$
+7. $\frac{\partial \ln det(A)}{\partial A} = (A^{-1})'$
+
+

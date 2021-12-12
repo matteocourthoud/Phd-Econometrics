@@ -1,0 +1,551 @@
+---
+title: "OLS Algebra"
+author: "Matteo Courthoud"
+type: book
+weight: 4
+date: 2021-10-29
+bibliography: references.bib
+link-citations: true
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    transition: 0
+    slide_level: 3
+    css: custom.css
+  ml_notebook: 
+    toc: true
+    toc_depth: 2
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    toc_collapsed: true
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+---
+
+```{r, include=FALSE, echo=FALSE}
+# Import packages
+library(tidyverse)    # Fur alles
+library(data.table)   # For freadr
+library(knitr)        # For kable
+library(broom)        # For tidy
+library(AER)          # For ivreg
+```
+
+```{r load julia if not loaded, include=FALSE, echo=FALSE}
+if (!("JuliaCall" %in% (.packages()))) {
+  library(JuliaCall)
+  julia <- julia_setup("/Users/mcourt/Documents/Julia-1.5.app/Contents/Resources/julia/bin")
+}
+```
+
+```{julia, include=FALSE, echo=FALSE}
+#import Pkg
+#Pkg.add("LinearAlgebra")
+#Pkg.add("Random")
+#Pkg.add("Statistics")
+#Pkg.add("Distributions")
+#Pkg.add("DataFrames")
+#Pkg.add("CSV")
+
+using LinearAlgebra
+using Random
+using Statistics
+using Distributions
+using DataFrames
+using CSV
+```
+
+## The Gauss Markov Model
+
+### Definition
+
+A statistical model for regression data is the **Gauss Markov Model** if each of its distributions satisfies the conditions
+
+1. **Linearity**: a statistical model $\mathcal{F}$ over data $\mathcal{D}$ satisfies linearity if for each element of $\mathcal{F}$, the data can be decomposed in
+	$$
+	\begin{aligned}
+	  y_ i &= \beta_ 1 x _ {i1} + \dots + \beta_ k x _ {ik} + \varepsilon_ i = x_ i'\beta + \varepsilon_ i \newline
+	  \underset{n \times 1}{\vphantom{\beta_ \beta} y} &= \underset{n \times k}{\vphantom{\beta}X} \cdot \underset{k \times 1}{\beta} + \underset{n \times 1}{\vphantom{\beta}\varepsilon}
+    \end{aligned}
+	$$
+	
+2. **Strict Exogeneity**: $\mathbb E [\varepsilon_i|x_1, \dots, x_n] = 0, \forall i$. 
+
+3. **No Multicollinerity**: $\mathbb E_n [x_i x_i']$ is strictly positive definite almost surely. Equivalent to require $rank(X)=k$ with probability $p \to 1$. 
+	Intuition: no regressor is a linear combination of other regressors.
+	
+4. **Spherical Error Variance**: 
+    -$\mathbb E[\varepsilon_i^2 | x] = \sigma^2 > 0, \ \forall i$
+    -$\mathbb E [\varepsilon_i \varepsilon_j |x ] = 0, \ \forall$ $1 \leq i < j \leq n$
+
+
+
+The **Extended Gauss Markov Model** also satisfies assumption
+
+5. **Normal error term**: $\varepsilon|X \sim N(0, \sigma^2 I_n)$ and $\varepsilon \perp X$.
+
+
+
+### Implications
+
+- Note that by (2) and (4) you get **homoskedasticity**: 
+
+$$
+Var(\varepsilon_i|x) = \mathbb E[\varepsilon_i^2|x]- \mathbb E[\varepsilon_i|x]^2 = \sigma^2 I \qquad \forall i
+$$
+
+- Strict exogeneity is not restrictive since it is sufficient to include a constant in the regression to enforce it
+$$
+	y_i = \alpha + x_i'\beta + (\varepsilon_i - \alpha) \quad \Rightarrow \quad \mathbb E[\varepsilon_i] = \mathbb E_x [ \mathbb E[ \varepsilon_i | x]] = 0
+$$
+- This implies $\mathbb E[x _ {jk} \varepsilon_i ] = 0$ by the LIE. 
+- These two conditions together imply $Cov (x _ {jk} \varepsilon_i ) = 0$.
+
+
+
+### Projection
+
+A map $\Pi: V \to V$ is a **projection** if $\Pi \circ \Pi = \Pi$.
+
+The Gauss Markov Model assumes that the **conditional expectation function (CEF)** $f(X) = \mathbb E[Y|X]$ and the **linear projection** $g(X) = X \beta$ coincide.
+
+
+
+### Code - DGP
+
+This code draws 100 observations from the model $y = 2 x_1 - x_2 + \varepsilon$ where $x_1, x_2 \sim U[0,1]$ and $\varepsilon \sim N(0,1)$.
+
+```{julia}
+# Set seed
+Random.seed!(123);
+
+# Set the number of observations
+n = 100;
+
+# Set the dimension of X
+k = 2;
+
+# Draw a sample of explanatory variables
+X = rand(Uniform(0,1), n, k);
+
+# Draw the error term
+σ = 1;
+ε = rand(Normal(0,1), n, 1) * sqrt(σ);
+
+# Set the parameters
+β = [2; -1];
+
+# Calculate the dependent variable
+y = X*β + ε;
+```
+
+
+
+## The OLS estimator
+
+### Definition
+
+The **sum of squared residuals (SSR)** is given by
+$$
+	Q_n (\beta) \equiv   \frac{1}{n} \sum _ {i=1}^n \left( y_i - x_i'\beta \right)^2 = \frac{1}{n} (y - X\beta)' (y - X \beta)
+$$
+
+Consider a dataset $\mathcal{D}$ and define $Q_n(\beta) = \mathbb E_n[(y_i - x_i'\beta )^2 ]$. Then the **ordinary least squares (OLS)** estimator $\hat \beta _ {OLS}$ is the value of $\beta$ that minimizes $Q_n(\beta)$.
+
+When we can write $D = (y, X)$ in matrix form, then 
+$$
+  \hat \beta _ {OLS} = \arg \min_\beta \frac{1}{n} (y - X \beta)' (y - X\beta)
+$$
+
+### Derivation
+
+**Theorem**
+
+Under the assumption that $X$ has full rank, the OLS estimator is unique and it is determined by the normal equations. More explicitly, $\hat \beta$ is the OLS estimate precisely when $X'X \hat \beta = X'y$.
+
+**Proof**
+
+Taking the FOC:
+$$
+	\frac{\partial Q_n (\beta)}{\partial \beta} = -\frac{2}{n} X' y  + \frac{2}{n} X'X\beta = 0 \quad \Leftrightarrow \quad X'X \beta = X'y
+$$
+Since $(X'X)^{-1}$ exists by assumption, 
+
+Finally, $\frac{\partial^2 Q_n (\beta)}{\partial \beta \partial \beta'} = X'X/n$ is positive definite since $X'X$ is positive semi-definite and $(X'X)^{-1}$ exists because $X$ is full rank. Therefore, $Q_n(\beta)$ minimized at $\hat \beta_n$.
+$$\tag*{$\blacksquare$}$$
+
+The  $k$ equations $X'X \hat \beta = X'y$ are called **normal equations**.
+
+
+
+### Futher Objects
+
+- Fitted coefficient: $\hat \beta _ {OLS} = (X'X)^{-1} X'y = \mathbb E_n [x_i x_i'] \mathbb E_n [x_i y_i]$
+- Fitted residual: $\hat \varepsilon_i = y_i - x_i'\hat \beta$
+- Fitted value: $\hat y_i = x_i' \hat \beta$
+- Predicted coefficient: $\hat \beta _ {-i}  = \mathbb E_n [x _ {-i} x' _ {-i}] \mathbb E_n [x _ {-i} y _ {-i}]$
+- Prediction error: $\hat \varepsilon _ {-i} = y_i - x_i'\hat \beta _ {-i}$
+- Predicted value: $\hat y_i = x_i' \hat \beta _ {-i}$
+
+
+
+### Notes on Orthogonality Conditions
+
+- The normal equations are equivalent to the moment condition $\mathbb E_n [x_i \varepsilon_i]= 0$.
+- The algebraic result $\mathbb E_n [x_i \hat \varepsilon_i]= 0$  is called **ortogonality property** of the OLS residual $\hat \varepsilon_i$.
+- If we have included a constant in the regression, $\mathbb E_n [\hat \varepsilon_i] = 0$.
+- $\mathbb E \Big[\mathbb E_n [x_i \varepsilon_i ] \Big] = 0$ by strict exogeneity (assumed in GM), but $\mathbb E_n [x_i \varepsilon_i]  \ne \mathbb E [x_i \varepsilon_i] = 0$. This is why $\hat \beta _ {OLS}$ is just an estimate of $\beta_0$.
+- Calculating OLS is like replacing the $j$ equations $\mathbb E [x _ {ij} \varepsilon_i] = 0$ $\forall j$ with $\mathbb E_n [x _ {ij} \varepsilon_i] = 0$ $\forall j$ and forcing them to hold (remindful of GMM).
+
+
+
+### The Projection Matrix
+
+
+The **projection matrix** is given by $P = X(X'X)^{-1} X'$. It has the following properties:
+- $PX = X$
+- $P \hat \varepsilon = 0 \quad$ ($P$, $\varepsilon$ orthogonal)
+- $P y = X(X'X)^{-1} X'y = X\hat \beta = \hat y$
+- Symmetric: $P=P'$, Idempotent: $PP = P$
+- $tr(P) = tr( X(X'X)^{-1} X') = tr( X'X(X'X)^{-1}) = tr(I_k) = k$
+- Its diagonal elements are $h_{ii} = x_i (X'X)^{-1} x_i'$ and are called **leverage**. 
+
+> $h _ {ii} \in [0,1]$ is a normalized length of the observed regressor vector $x_i$. In the OLS regression framework it captures the relative influence of observation $i$ on the estimated coefficient. Note that $\sum _ n h_{ii} = k$.
+
+
+
+### The Annihilator Matrix
+
+
+The **annihilator matrix** is given by $M = I_n - P$. It has the following properties:
+- $MX = 0  \quad$ ($M$, $X$ orthogonal)
+- $M \hat \varepsilon = \hat \varepsilon$
+- $M y = \hat \varepsilon$
+- Symmetric: $M=M'$, idempotent: $MM = M$
+- $tr(M) = n - k$
+- Its diagonal elements are $1 - h_{ii} \in [0,1]$
+	
+> Then we can equivalently write $\hat y$ (defined by stacking $\hat y_i$ into a vector) as $\hat y = Py$.
+
+### Estimating Beta
+
+```{julia}
+# Estimate beta
+β_hat = inv(X'*X)*(X'*y)
+
+# Equivalent but faster formulation
+β_hat = (X'*X)\(X'*y)
+
+# Even faster (but less intuitive) formulation
+β_hat = X\y
+```
+
+
+
+### Equivalent Formulation?
+
+Generally it's not true that
+$$
+\hat \beta_{OLS} = \frac{Var(X)}{Cov(X,y)}
+$$
+```{julia}
+# Wrong formulation
+β_wrong = inv(cov(X)) * cov(X, y)
+```
+
+
+
+### Equivalent Formulation (correct)
+
+But it's true if you include a constant, $\alpha$
+$$
+y = \alpha + X \beta  + \varepsilon
+$$
+
+
+```{julia}
+# Correct, with constant
+α = 3;
+y1 = α .+ X*β + ε;
+β_hat1 = [ones(n,1) X] \ y1
+β_correct1 = inv(cov(X)) * cov(X, y1)
+```
+
+
+
+### Some More Objects
+
+```{julia}
+# Predicted y
+y_hat = X*β_hat;
+
+# Residuals
+ε_hat = y - X*β_hat;
+
+# Projection matrix
+P = X * inv(X'*X) * X';
+
+# Annihilator matrix
+M = I - P;
+
+# Leverage
+h = diag(P);
+```
+
+
+
+
+
+## OLS Residuals
+
+### Homoskedasticity
+
+The error is **homoskedastic** if $\mathbb E [\varepsilon^2 | x] = \sigma^2$ does not depend on $x$.
+$$
+	Var(\varepsilon) = I \sigma^2 = \begin{bmatrix}
+	\sigma^2 & \dots & 0 \newline\newline\
+	\vdots & \ddots & \vdots \newline
+	0 & \dots & \sigma^2
+	\end{bmatrix}
+$$
+
+The error is **heteroskedastic** if $\mathbb E [\varepsilon^2 | x] = \sigma^2(x)$ does depend on $x$.
+$$
+	Var(\varepsilon) = I \sigma_i^2 = 
+	\begin{bmatrix}
+	\sigma_1^2 & \dots & 0 \newline
+	\vdots & \ddots & \vdots \newline
+	0 & \dots & \sigma_n^2 
+	\end{bmatrix}
+$$
+
+
+
+### Residual Variance
+
+The OLS **residual variance** can be an object of interest even in a heteroskedastic regression. Its method of moments estimator is given by
+$$
+  \hat \sigma^2 = \frac{1}{n} \sum _ {i=1}^n \hat \varepsilon_i^2
+$$
+
+> Note that $\hat \sigma^2$ can be rewritten as 
+$$
+\hat \sigma^2 = \frac{1}{n} \varepsilon' M' M \varepsilon = \frac{1}{n} tr(\varepsilon' M \varepsilon) = \frac{1}{n} tr(M \varepsilon' \varepsilon)
+$$
+
+However, the method of moments estimator is a biesed estimator. In fact
+$$
+  \mathbb E[\hat \sigma^2 | X] = \frac{1}{n} \mathbb E [ tr(M \varepsilon' \varepsilon) | X] =  \frac{1}{n} tr( M\mathbb E[\varepsilon' \varepsilon |X]) = \frac{1}{n} \sum _ {i=1}^n (1-h_{ii}) \sigma^2_i
+$$
+
+Under conditional homoskedasticity, the above expression simplifies to
+$$
+  \mathbb E[\hat \sigma^2 | X] = \frac{1}{n} tr(M) \sigma^2 = \frac{n-k}{n} \sigma^2
+$$
+
+### Sample Variance
+
+The OLS **residual sample variance** is denoted by $s^2$ and is given by
+$$
+  s^2 = \frac{SSR}{n-k} = \frac{\hat \varepsilon'\hat \varepsilon}{n-k} = \frac{1}{n-k}\sum _ {i=1}^n \hat \varepsilon_i^2
+$$
+Furthermore, the square root of $s^2$, denoted $s$, is called the standard error of the regression (SER) or the standard error of the equation (SEE).  Not to be confused with other notions of standard error to be defined later in the course.
+
+> The sum of squared residuals can be rewritten as: $SSR = \hat \varepsilon' \hat \varepsilon = \varepsilon' M \varepsilon$.
+
+The OLS residual sample variance is an unbiased estimator of the error variance $\sigma^2$.
+
+Another unbiased estimator of $\sigma^2$ is given by
+$$
+  \bar \sigma^2 = \frac{1}{n} \sum _ {i=1}^n (1-h_{ii})^{-1} \hat \varepsilon_i^2
+$$
+
+
+
+### Uncentered R^2
+
+One measure of the variability of the dependent variable $y_i$ is the sum of squares $\sum _ {i=1}^n y_i^2 = y'y$.  There is a decomposition:
+$$
+\begin{aligned}
+	y'y &= (\hat y + e)' (\hat y + \hat \varepsilon) \newline
+	&= \hat y' \hat y + 2 \hat y' \hat \varepsilon + \hat \varepsilon' \hat \varepsilon e \newline
+	&= \hat y' \hat y + 2 b'X'\hat \varepsilon + \hat \varepsilon' \hat \varepsilon \ \ (\text{since} \ \hat y = Xb) \newline
+	&= \hat y' \hat y + \hat \varepsilon'\hat \varepsilon \ \ (\text{since} \ X'\hat \varepsilon =0)
+\end{aligned}
+$$
+
+The **uncentered** $\mathbf{R^2}$ is defined as:
+$$
+	R^2 _ {uc} \equiv 1 - \frac{\hat \varepsilon'\hat \varepsilon}{y'y} = 1 - \frac{\mathbb E_n[\hat \varepsilon_i^2]}{\mathbb E_n[y_i^2]} = \frac{ \mathbb E [\hat y_i^2]}{ \mathbb E [y_i^2]}
+$$
+
+
+
+### Centered R^2
+
+A more natural measure of variability is the sum of centered squares $\sum _ {i=1}^n (y_i - \bar y)^2,$ where $\bar y := \frac{1}{n}\sum _ {i=1}^n y_i$. If the regressors include a constant, it can be decomposed as 
+$$
+  \sum _ {i=1}^n (y_i - \bar y)^2 = \sum _ {i=1}^n (\hat y_i - \bar y)^2 + \sum _ {i=1}^n \hat \varepsilon_i^2
+$$
+
+The **coefficient of determination**, $\mathbf{R^2}$, is defined as 
+$$
+	R^2 \equiv 1 - \frac{\sum _ {i=1}^n \hat \varepsilon_i^2}{\sum _ {i=1}^n (y_i - \bar y)^2 }= \frac{  \sum _ {i=1}^n (\hat y_i - \bar y)^2 } { \sum _ {i=1}^n (y_i - \bar y)^2} = \frac{\mathbb E_n[(\hat y_i - \bar y)^2]}{\mathbb E_n[(y_i - \bar y)^2]}
+$$
+
+> Always use the centered $R^2$ unless you really know what you are doing.
+
+
+
+### Code - Variance
+
+```{julia}
+# Biased variance estimator
+σ_hat = ε_hat'*ε_hat / n;
+
+# Unbiased estimator 1
+σ_hat_2 = ε_hat'*ε_hat / (n-k);
+
+# Unbiased estimator 2
+σ_hat_3 = mean( ε_hat.^2 ./ (1 .- h) );
+```
+
+
+
+### Code - R^2
+
+```{julia}
+# R squared - uncentered
+R2_uc = (y_hat'*y_hat)/ (y'*y);
+
+# R squared
+y_bar = mean(y);
+R2 = ((y_hat .- y_bar)'*(y_hat .- y_bar))/ ((y .- y_bar)'*(y .- y_bar));
+```
+
+
+
+
+
+## Finite Sample Properties of OLS
+
+### Conditional Unbiasedness
+
+**Theorem**
+
+Under the GM assumptions (1)-(3), the OLS estimator is **conditionally unbiased**, i.e. the distribution of $\hat \beta _ {OLS}$ is centered at $\beta_0$: $\mathbb E [\hat \beta | X] = \beta_0$.
+
+**Proof**
+$$
+\begin{aligned}
+	\mathbb E [\hat \beta  | X] &= \mathbb E [ (X'X)^{-1} X'y | X] = \newline
+	&= (X'X)^{-1} X ' \mathbb E  [y | X] = \newline
+	&= (X'X)^{-1} X' \mathbb E  [X \beta + \varepsilon | X] = \newline
+	&= (X'X)^{-1} X'X \beta + (X'X)^{-1} X' \mathbb E  [\varepsilon | X] = \newline
+	&= \beta 
+\end{aligned}
+$$
+$$\tag*{$\blacksquare$}$$	
+
+### OLS Variance
+
+**Theorem**
+
+Under the GM assumptions (1)-(3), $Var(\hat \beta |X) = \sigma^2 (X'X)^{-1}$.
+
+**Proof**: 
+$$
+\begin{aligned}
+	Var(\hat \beta |X) &= Var( (X'X)^{-1} X'y|X) = \newline
+	&= ((X'X)^{-1} X' ) Var(y|X) ((X'X)^{-1} X' )' = \newline
+	&= ((X'X)^{-1} X' ) Var(X\beta + \varepsilon|X) ((X'X)^{-1} X' )' = \newline
+	&= ((X'X)^{-1} X' ) Var(\varepsilon|X) ((X'X)^{-1} X' )' = \newline
+	&= ((X'X)^{-1} X' ) \sigma^2 I ((X'X)^{-1} X' )' =  \newline
+	&= \sigma^2 (X'X)^{-1}
+\end{aligned}
+$$
+$$\tag*{$\blacksquare$}$$
+
+Higher correlation of the $X$ implies higher variance of the OLS estimator. 
+
+> Intuition: individual observations carry less information. You are exploring a smaller region of the $X$ space.
+
+
+
+### BLUE
+
+**Theorem**
+
+Under the GM assumptions (1)-(3), $Cov (\hat \beta, \hat \varepsilon ) = 0$.
+
+**Theorem**
+
+Under the GM assumptions (1)-(3), $\hat \beta _ {OLS}$ is the best (most efficient) linear, unbiased estimator (**BLUE**), i.e., for any unbiased linear estimator $b$: $Var (b|X) \geq Var (\hat \beta |X)$.
+
+### BLUE Proof
+
+Consider four steps:
+
+1. Define three objects: (i) $b= Cy$, (ii) $A = (X'X)^{-1} X'$ such that $\hat \beta = A y$, and (iii) $D = C-A$. 
+2. Decompose $b$ as
+$$
+\begin{aligned}
+	b &= (D + A) y = \newline
+	&=  Dy + Ay = \newline\
+	&= D (X\beta + \varepsilon) + \hat \beta = \newline
+	&= DX\beta + D \varepsilon + \hat \beta
+\end{aligned}
+$$
+3. By assumption, $b$ must be unbiased:
+$$
+\begin{aligned}
+	\mathbb E [b|X] &= \mathbb E [D(X\beta + \varepsilon) + Ay |X] = \newline
+	&= \mathbb E [DX\beta|X] + \mathbb E [D\varepsilon |X] + \mathbb E [\hat \beta |X] = \newline
+	&= DX\beta + D \mathbb E [\varepsilon |X] +\beta \newline\
+	&= DX\beta + \beta
+\end{aligned}
+$$
+  Hence, it must be that $DX = 0$
+
+
+
+### BLUE Proof (2)
+
+4.  We know by (2)-(3) that $b = D \varepsilon + \hat \beta$. We can now calculate its variance.
+$$
+\begin{aligned}
+	Var (b|X) &= Var (\hat \beta + D\varepsilon|X) = \newline
+	&= Var (Ay + D\varepsilon|X) = \newline
+	&= Var (AX\beta + (D + A)\varepsilon|X) = \newline
+	&= Var((D+A)\varepsilon |X) = \newline
+	&= (D+A)\sigma^2 I (D+A)' = \newline
+	&= \sigma^2 I (DD' + AA' + DA' + AD') = \newline
+	&= \sigma^2 I (DD' + AA') \geq \newline
+	&\geq \sigma^2 AA'= \newline
+	&= \sigma^2 (X'X)^{-1} = \newline
+	&= Var (\hat \beta|X)
+\end{aligned}
+$$
+since $DA'= AD' = 0$,  $DX = 0$ and $AA' = (X'X)^{-1}$.
+$$\tag*{$\blacksquare$}$$
+
+> $Var(b | X) \geq Var (\hat{\beta} | X)$ is meant in a positive definite sense.
+
+
+
+### Code - Variance
+
+```{julia}
+# Ideal variance of the OLS estimator
+var_β = σ * inv(X'*X)
+
+# Standard errors
+std_β = sqrt.(diag(var_β))
+```
+
+
+

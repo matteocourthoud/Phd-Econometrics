@@ -1,0 +1,200 @@
+/*
+Custom CSS template for ioslides
+
+Author: Matteo Courthoud
+Repo: https://github.com/matteocourthoud/ioslides-theme
+*/
+
+/* Import google fonts */
+@import url('https://fonts.googleapis.com/css?family=Lora|Open+Sans&display=swap');
+
+/* Slide: change font */
+slides > slide {
+  font-family: 'Source Sans Pro', sans-serif;
+  overflow: scroll;
+}
+
+/* Slide: text color black */
+slides > slide > article {
+  color: black;
+  font-weight: 300;
+}
+
+/* Slide: transition slides white */
+slides > slide.dark {
+  background-color: white !important;
+}
+
+/* Header: change color */
+h1 {
+  color: #003f5c !important;
+}
+h2 {
+  color: #003f5c !important;
+}
+
+/* Header: underline section slides */
+.auto-fadein {
+  width: 70%;
+}
+.auto-fadein > h1 {
+  border-bottom: 2px solid grey;
+  padding-bottom: 10px;
+}
+.auto-fadein > h2 {
+  border-bottom: 2px solid grey;
+  padding-bottom: 10px;
+}
+
+/* References: text color white
+.csl-entry p {
+  color: white;
+}
+*/
+
+/* Citations: colored */
+.cite {
+  color: #2b7ddf;
+}
+
+/* Center Images */
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 25px;
+  max-width: 100%;
+}
+
+/* Unordered list style */
+
+/* First level */
+ul > li:before {
+  content: '';
+}
+ul > li {
+  list-style-type: disc;
+}
+
+/* Second level */
+ul > li > ul > li:before {
+  content: '';
+}
+ul > li > ul > li {
+  list-style-type: circle;
+}
+
+/* Unordered list style */
+ul {
+  margin-left: 2em !important;
+}
+ul > li {
+  margin-top: .5em !important;
+  margin-bottom: 1em !important;
+}
+ul > li > p {
+  margin-bottom: 0em !important;
+}
+ul > li > ul {
+  margin-top: 0em !important;
+  margin-bottom: .25em !important;
+}
+ul > li > ul > li {
+  margin-top: .25em !important;
+  margin-bottom: .25em !important;
+}
+
+/* Ordered list style */
+ol {
+  margin-left: 2em !important;
+}
+ol > li {
+  margin-top: .5em !important;
+  margin-bottom: 1em !important;
+}
+ol > li > p {
+  margin-bottom: 0em !important;
+}
+ol > li > ul {
+  margin-top: 0em !important;
+  margin-bottom: .25em !important;
+}
+ol > li > ul > li {
+  margin-top: .25em !important;
+  margin-bottom: .25em !important;
+}
+
+
+/* Code */
+pre {
+  width: auto !important;
+  left: 0px !important;
+  padding: 10px 20px 10px 20px !important;
+  border-radius: 5px !important;
+  border-color: #adb5bd !important;
+  border-width: thin !important;
+  border-style: solid !important;
+}
+
+pre.prettyprint {
+  background-color: #f8f8f8 !important;
+}
+
+
+
+/* Blockquotes */
+blockquote {
+  background: #ffe8e4;
+  border-left: 5px solid #ff6e54;
+  margin-right: 2em;
+  padding: 0.5em 1.5em;
+}
+blockquote p {
+  font-style: italic;
+  margin-bottom: .5em !important;
+}
+
+
+
+/* Table */
+table.rmdtable {
+  width: auto !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-bottom: 25px;
+  border-bottom: none !important;
+  border-spacing: 0px !important;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+table.rmdtable th {
+  background: none !important;
+  background-color: #003f5c !important;
+  padding: 10px;
+  text-align: center !important;
+}
+
+table.rmdtable td, table th {
+    padding: 1em 1em !important;
+}
+
+/* Round borders */
+table.rmdtable th:first-child {
+    border-radius: 5px 0 0 0;
+}
+table.rmdtable th:last-child {
+    border-radius: 0 5px 0 0;
+}
+
+table.rmdtable tr:last-child td:first-child {
+    border-radius: 0 0 0 5px;
+}
+table.rmdtable tr:last-child td:last-child {
+    border-radius: 0 0 5px 0;
+}
+
+/* Table Hover */
+table.rmdtable > tbody > tr:hover > td,
+table.rmdtable > tbody > tr:hover > th {
+  background-color: #e5e5e5;
+}

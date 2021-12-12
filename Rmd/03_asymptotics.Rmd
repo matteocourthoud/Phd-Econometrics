@@ -1,0 +1,418 @@
+---
+title: "Asymptotic Theory"
+author: "Matteo Courthoud"
+type: book
+weight: 3
+date: 2021-10-29
+bibliography: references.bib
+link-citations: true
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    transition: 0
+    slide_level: 3
+    css: custom.css
+  ml_notebook: 
+    toc: true
+    toc_depth: 2
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    toc_collapsed: true
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+---
+
+## Convergence
+
+### Sequences
+
+A sequence of nonrandom numbers $\lbrace a_n \rbrace$ **converges** to $a$ (has limit $a$) if for all $\varepsilon>0$, there exists $n _ \varepsilon$ such that if $n > n_ \varepsilon$, then $|a_n -  a| < \varepsilon$. We write $a_n \to a$ as $n \to \infty$.
+
+A sequence of nonrandom numbers $\lbrace a_n \rbrace$ is **bounded** if and only if there is some $B < \infty$ such that $|a_n| \leq B$ for all $n=1,2,...$ Otherwise, we say that $\lbrace a_n \rbrace$ is unbounded.
+
+A sequence of nonrandom numbers $\lbrace a_n \rbrace$ is $O(N^\delta)$ (at most of order $N^\delta$) if $N^{-\delta} a_n$ is bounded. When $\delta=0$, $a_n$ is bounded, and we also write $a_n = O(1)$ (big oh one).
+
+A sequence of nonrandom numbers $\lbrace a_n \rbrace$ is $o(N^\delta)$ if $N^{-\delta} a_n \to 0$. When $\delta=0$, $a_n$ converges to zero, and we also write $a_n = o(1)$ (little oh one).
+
+> From the definitions, it is clear that if $a_n = o(N^{\delta})$, then $a_n = O(N^\delta)$; in particular, if $a_n = o(1)$, then $a_n = O(1)$. If each element of a sequence of vectors or matrices is $O(N^\delta)$, we say the sequence of vectors or matrices is $O(N^\delta)$, and similarly for $o(N^\delta)$.
+
+
+
+### Convergence in Probability
+
+A sequence of random variables $\lbrace X_n \rbrace$ **converges in probability** to a constant $c \in \mathbb R$ if for all $\varepsilon>0$
+$$
+	\Pr \big( |X_n - c| > \varepsilon \big) \to 0 \qquad \text{ as } n \to \infty
+$$
+We write $X_n \overset{p}{\to} c$ and say that $a$ is the probability limit (*plim*) of $X_n$: $\mathrm{plim} X_n = c$. In the special case where $c=0$, we also say that $\lbrace X_n \rbrace$ is $o_p(1)$ (little oh p one). We also write $X_n = o_p(1)$ or $X_n \overset{p}{\to} 0$.
+
+A sequence of random variables $\lbrace X_n \rbrace$ is bounded in probability if for every $\varepsilon>0$, there exists a $B _ \varepsilon < \infty$ and an integer $n_ \varepsilon$ such that
+$$
+	\Pr \big( |x_ n| > B_ \varepsilon \big) < \varepsilon \qquad \text{ for all } n > n_ \varepsilon
+$$
+We write $X_n = O_p(1)$ ($\lbrace X_n \rbrace$ is big oh p one).
+
+A sequence of random variables $\lbrace X_n \rbrace$ is $o_p(a_n)$ where $\lbrace a_n \rbrace$ is a nonrandom positive sequence, if $X_n/a_n = o_p(1)$. We write $X_n = o_p(a_n)$.
+
+A sequence of random variables $\lbrace X_n \rbrace$ is $O_p(a_n)$ where $\lbrace a_n \rbrace$ is a nonrandom positive sequence, if $X_n/a_n = O_p(1)$. We write $X_n = O_p(a_n)$.
+
+
+
+### Other Convergences
+
+A sequence of random variables $\lbrace X_n \rbrace$ **converges almost surely** to a constant $c \in \mathbb R$ if
+$$
+	\Pr \big( X_n \overset{p}{\to} c \big) = 1
+$$
+We write $X_n \overset{as}{\to} c$.
+
+A sequence of random variables $\lbrace X_n \rbrace$ **converges in mean square** to a constant $c \in \mathbb R$ if
+$$
+  \mathbb E [(X_n - c)^2] \to 0  \qquad \text{ as } n \to \infty
+$$
+We write $X_n \overset{ms}{\to} c$.
+
+Let $\lbrace X_n \rbrace$ be a sequence of random variables and $F_n$ be the cumulative distribution function (cdf) of $X_n$. We say that $X_n$ **converges in distribution** to a random variable $x$ with cdf $F$ if the cdf $F_n$ of $X_n$ converges to the cdf $F$ of $x$ *at every continuity point* of $F$. We write $X_n \overset{d}{\to} x$ and we call $F$ the **asymptotic distribution** of $X_n$.
+
+
+
+### Compare Convergences
+
+**Lemma**:
+Let $\lbrace X_n \rbrace$ be a sequence of random variables and $c \in \mathbb R$
+
+- $X_n \overset{ms}{\to} c \ \Rightarrow \ X_n \overset{p}{\to} c$
+- $X_n \overset{as}{\to} c \ \Rightarrow \ X_n \overset{p}{\to} c$
+- $X_n \overset{p}{\to} c \ \Rightarrow \ X_n \overset{d}{\to} c$
+
+> Note that all the above definitions naturally extend to a sequence of random vectors by requiring element-by-element convergence. For example, a sequence of $K \times 1$ random vectors $\lbrace X_n \rbrace$ **converges in probability** to a constant $c \in \mathbb R^K$ if for all $\varepsilon>0$
+  $$
+  \Pr \big( |X _ {nk} - c_k| > \varepsilon \big) \to 0 \qquad \text{ as } n \to \infty \quad \forall k = 1...K
+  $$
+
+
+
+
+
+## Theorems
+
+### Slutsky Theorem
+
+**Theorem**
+
+Let $\lbrace X_n \rbrace$ and $\lbrace Y_n \rbrace$ be two sequences of random variables, $x$ a random variable and $c$ a constant such that $\lbrace X_n \rbrace \overset{d}{\to} X$ and $\lbrace Y_n \rbrace \overset{p}{\to} c$. Then
+
+- $X_n + Y_n \overset{d}{\to} X + c$
+- $X_n \cdot Y_n \overset{d}{\to} X \cdot c$
+
+
+
+### Continuous Mapping Theorem
+
+**Theorem**
+
+Let $\lbrace X_n \rbrace$ be sequence of $K \times 1$ random vectors and $g: \mathbb{R}^K \to \mathbb{R}^J$ a continuous function that does not depend on $n$.Then
+
+- $x _n \overset{as}{\to} x \ \Rightarrow \ g(X_n) \overset{as}{\to} g(x)$
+- $x _n \overset{p}{\to} x \ \Rightarrow \ g(X_n) \overset{p}{\to} g(x)$
+- $x _n \overset{d}{\to} x \ \Rightarrow \ g(X_n) \overset{d}{\to} g(x)$
+
+
+
+### Weak Law of Large Numbers
+
+**Theorem**
+
+Let $\lbrace x_i \rbrace _ {i=1}^n$ be a sequence of independent, identically distributed random variables such that $\mathbb{E}[|x_i|] < \infty$. Then the sequence satisfies the **weak law of large numbers (WLLN)**: 
+$$
+	\mathbb{E}_n[x_i] = \frac{1}{n} \sum _ {i=1}^n x_i \overset{p}{\to} \mu \qquad \text{ where } \mu \equiv \mathbb{E}[x_i] 
+$$
+
+> **Intuitions** for the law of large numbers:
+>
+- Cancellation with high probability.
+- Re-visiting regions of the sample space over and over again.
+
+
+
+### Proof
+
+The independence of the random variables implies no correlation between them, and we have that
+$$
+	Var \left( \mathbb{E}_n[x_i] \right) = Var \left( \frac{1}{n} \sum _ {i=1}^n x_i \right) = \frac{1}{n^2} Var\left( \sum _ {i=1}^n x_i \right) = \frac{n \sigma^2}{n^2} = \frac{\sigma^2}{n}
+$$
+Using Chebyshev's inequality on $\mathbb{E}_n[x_i]$ results in
+$$
+	\Pr \big( \left|\mathbb{E}_n[x_i]-\mu \right| > \varepsilon \big) \leq {\frac {\sigma ^{2}}{n\varepsilon ^{2}}}
+$$
+As $n$ approaches infinity, the right hand side approaches $0$. And by definition of convergence in probability, we have obtained $\mathbb{E}_n[x_i] \overset{p}{\to} \mu$ as $n \to \infty$.
+$$\tag*{$\blacksquare$}$$
+
+
+
+
+
+### Central Limit Theorem
+
+**Lindberg-Levy Central Limit Theorem**
+
+Let $\lbrace x_i \rbrace _ {i=1}^n$ be a sequence of independent, identically distributed random variables such that $\mathbb{E}[x_i^2] < \infty$, and $\mathbb{E}[x_i] = \mu$. Then $\lbrace x_i \rbrace$ satisfies the **central limit theorem (CLT)**; that is,
+$$
+	\frac{1}{\sqrt{n}} \sum _ {i=1}^{n} (x_i - \mu) \overset{d}{\to} N(0,\sigma^2)
+$$
+where $\sigma^2 = Var(x_i) = \mathbb{E}[x_i x_i']$ is necessarily positive semidefinite.
+
+
+
+### Proof
+
+Suppose $\lbrace x_i \rbrace$ are independent and identically distributed random variables, each with mean $\mu$ and finite variance $\sigma^2$. The sum $x_1 + ... + X_n$ has mean $n \mu$ and variance $n \sigma^2$. Consider the random variable
+
+$$
+Z_n = \frac{x_1 + ... + X_n - n\mu}{\sqrt{n \sigma^2}} = \sum _ {i=1}^n \frac{x_i - \mu}{\sqrt{n \sigma^2}} = \sum _ {i=1}^n \frac{1}{\sqrt{n}} \tilde x_i
+$$
+
+where in the last step we defined the new random variables $\tilde x_i = \frac{x_i - \mu}{\sigma}$ each with zero mean and unit variance. The characteristic function of $Z_n$ is given by
+$$
+\varphi _ {Z_n} (t) = \varphi _ { \sum _ {i=1}^n \frac{1}{\sqrt{n} } \tilde{x}_i}(t) = \varphi _ {\tilde x_1} \left( \frac{t}{\sqrt{n}} \right) \times ... \times \varphi _ {Y_n} \left( \frac{t}{\sqrt{n}} \right) = \left[ \varphi _ {\tilde x_1} \left( \frac{t}{\sqrt{n}} \right) \right]^n
+$$
+
+where in the last step we used the fact that all of the $\tilde{x}_i$ are identically distributed. The characteristic function of $\tilde{x}_1$ is, by Taylor's theorem,
+$$
+	\varphi _ {\tilde{x}_1} \left( \frac{t}{\sqrt{n}} \right) = 1 - \frac{t^2}{2n} + o \left( \frac{t^2}{n} \right) \qquad \text{ for } n \to \infty
+$$
+
+where $o(t^2)$ is "little o notation" for some function of $t$ that goes to zero more rapidly than $t^2$. By the limit of the exponential function, the characteristic function of $Z_n$ equals
+$$
+	\varphi _ {Z_ n}(t) = \left[  1 - \frac{t^2}{2n} + o \left( \frac{t^2}{n} \right) \right]^n \to e^{ -\frac{1}{2}t^2 } \qquad \text{ for } n \to \infty
+$$
+
+Note that all of the higher order terms vanish in the limit $n \to \infty$. The right hand side equals the characteristic function of a standard normal distribution $N(0,1)$, which implies through Lévy's continuity theorem that the distribution of $Z_ n$ will approach $N(0,1)$ as $n \to \infty$. Therefore, the sum $x_1 + ... + x_n$ will approach that of the normal distribution $N(n_{\mu}, n\sigma^2)$, and the sample average
+$$
+\mathbb{E}_n [x_i] = \frac{1}{n} \sum _ {i=1}^n x_i
+$$
+
+converges to the normal distribution $N(\mu, \sigma^2)$, from which the central limit theorem follows.
+$$\tag*{$\blacksquare$}$$
+
+### Delta Method
+
+Let $\lbrace X_n \rbrace$ be a sequence of independent, identically distributed $K \times 1$ random vectors such that
+
+- $\sqrt{n} (X_n - c) \overset{d}{\to} Z$ for some fixed $c \in \mathbb{R}^K$ 
+- and $\Sigma$ a $K \times K$ positive definite matrix. 
+
+Suppose $g : \mathbb{R}^K \to \mathbb{R}^J$ with $J \leq K$ is continuously differentiable and full rank at $c$, then
+$$
+	\sqrt{n} \Big[ g(X_n) - g( c ) \Big] \overset{d}{\to} G Z
+$$
+
+where $G = \frac{\partial g( c )}{\partial x}$ is the $J \times K$ matrix of partial derivatives evaluated at $c$.
+
+> Note that the most common utilization is with the random variable $\mathbb E_n [x_i]$. In fact, under the assumptions of the CLT, we have that
+$$
+  \sqrt{n} \Big[ g \big( \mathbb E_n [x_i] \big) - g(\mu) \Big] \overset{d}{\to} N(0, G \Sigma G')
+$$
+
+
+
+## Ergodic Theory
+
+### PPT
+
+Let $(\Omega, \mathcal{B}, P)$ be a probability space and $T: \Omega \rightarrow \Omega$ a measurable map. $T$ is a **probability preserving transformation** if the probability of the pre-image of every set is the same as the probability of the set itself, i.e. $\forall G, \Pr(T^{-1}(G)) = \Pr(G)$.
+
+Let $(\Omega, \mathcal{B}, P)$ be a probability space and $T: \Omega \rightarrow \Omega$ a PPT. A set $G \in \mathcal{B}$ is **invariant** if $T^{-1}(G)=G$.
+
+> Note that it does not have to work the other way around: $G \neq T(G)$.
+
+Let $(\Omega, \mathcal{B}, P)$ be a probability space and $T: \Omega \rightarrow \Omega$ a PPT. $T$ is **ergodic** if every invariant set $G \in \mathcal{B}$ has probability zero or one, i.e. $\Pr(G) = 0 \lor \Pr(G) = 1$.
+
+
+
+### Poincarè Recurrence
+
+**Theorem**
+
+Let $(\Omega, \mathcal{B}, P)$ be a probability space and $T: \Omega \rightarrow \Omega$ a PPT. Suppose $A \in \mathcal{B}$ is measurable. Then, for almost every $\omega \in A$, $T^n(\omega)\in A$ for infinitely many $n$.
+
+**Proof**
+
+We follow 5 steps:
+
+1. Let $G = \lbrace \omega \in A : T^K(\omega) \notin A \quad \forall k >0 \rbrace$: the set of all points of A that never ``return" in A.
+2.  Note that $\forall j \geq 1$, $T^{-j}(G) \cap G = \emptyset$. In fact, suppose $\omega \in T^{-j}(G)$. Then $\omega \notin G$ since otherwise we would have $\omega \in G \subseteq A$ and $\omega \in T^J(G) \subseteq A$ which contradicts the definition of $G$.
+3. It follows that $\forall l,n \geq 1$, $T^{-l}(G) \cap T^{-n}(G) = \emptyset$
+4. Since $T$ is a PPT, $\Pr(T^{-j}(G)) = \Pr(G)$ $\forall j$
+5. Then 
+$$
+		\Pr (T^{-1}(G) \cup T^{-2}(G) \cup ... \cup T^{-l}(G)) = l \cdot \Pr(G) \leq 1 \Rightarrow \Pr(G) \leq \frac{1}{l} \quad \Rightarrow \quad \lim_ {l \to \infty} \Pr(G) = 0 
+$$
+$$\tag*{$\blacksquare$}$$
+
+### Comment
+
+Halmos: "*The recurrence theorem says that under the appropriate conditions on a transformation T almost every point of each measurable set $A$ returns to $A$ infinitely often. It is natural to ask: exactly how long a time do the images of such recurrent points spend in $A$? The precise formulation of the problem runs as follows: given a point $x$ (for present purposes it does not matter whether $x$ is in $A$ or not), and given a positive integer $n$, form the ratio of the number of these points that belong to $A$ to the total number (i.e., to $n$), and evaluate the limit of these ratios as $n$ tends to infinity. It is, of course, not at all obvious in what sense, if any, that limit exists. If $f$ is the characteristic function of $A$ then the ratio just discussed is*"
+$$
+	\frac{1}{n} \sum _ {i=1}^n f(T^{i}x) = \frac{1}{n} \sum _ {i=1}^n x_i 
+$$
+
+### Ergodic Theorem
+
+**Theorem**
+
+Let $T$ be an ergodic PPT on $\Omega$. Let $x$ be a random variable on $\Omega$ with $\mathbb{E}[x] < \infty$. Let $x_i = x \circ T^i$. Then,
+$$
+		\frac{1}{n} \sum _ {i=1}^n x_i \overset{as}{\to} \mathbb{E}[x]
+$$
+
+> To figure out whether a PPT is ergodic, it's useful to draw a graph with $T^{-1}(G)$ on the y-axis and $G$ on the x-axis.
+
+
+
+### Comment
+
+From the ergodic theorem, we have that 
+$$
+	\lim _ {n \to \infty} \frac{1}{n} \sum _ {i=1}^n f(T^{i}x) g(x) = f^* (x)g(x) \quad \Rightarrow \quad  \lim _ {n \to \infty} \Pr(T^{-n}G \cap H) = \Pr(G)\Pr(H)
+$$
+where $f^* (x) = \int f(x) dx = \mathbb{E}[f]$.
+
+[Halmos]: *We have seen that if a transformation $T$ is ergodic, then $\Pr(T^{-n}G \cap H)$ converges in the sense of Cesaro to $\Pr(G)\Pr(H)$. The validity of this condition for all $G$ and $H$ is, in fact, equivalent to ergodicity. To prove this, suppose that $A$ is a measurable invariant set, and take both $G$ and $H$ equal to $A$. It follows that $\Pr(A) = (\Pr(A))^2$, and hence that $\Pr(A)$ is either 0 or 1.* 
+
+
+
+### Comment 2
+
+*The Cesaro convergence condition has a natural intuitive interpretation. We may visualize the transformation $T$ as a particular way of stirring the contents of a vessel (of total volume 1) full of an incompressible fluid, which may be thought of as 90 per cent gin ($G$) and 10 per cent vermouth ($H$). If $H$ is the region originally occupied by the vermouth, then, for any part $G$ of the vessel, the relative amount of vermouth in $G$, after $n$ repetitions of the act of stirring, is given by $\Pr(T^{-n}G \cap H)/\Pr(H)$. The ergodicity of $T$ implies therefore that on the average this relative amount is exactly equal to 10 per cent. In general, in physical situations like this one, one expects to be justified in making a much stronger statement, namely that, after the liquid has been stirred sufficiently often ($n \to \infty$), every part $G$ of the container will contain approximately 10 per cent vermouth. In mathematical language this expectation amounts to replacing Cesaro convergence by ordinary convergence, i.e., to the condition $\lim_ {n\to \infty} \Pr(T^{-n}G \cap H) = \Pr(G)\Pr(H)$. If a transformation $T$ satisfies this condition for every pair $G$ and $H$ of measurable sets, it is called mixing, or, in distinction from a related but slightly weaker concept, strongly mixing.*"
+
+
+
+### Mixing
+
+Let $\lbrace\Omega, \mathcal{B}, P \rbrace$ be a probability space. Let $T$ be a probability preserving transform. Then $T$ is **strongly mixing** if for every invariant sets $G$,$H \in \mathcal{B}$
+$$
+	P(G \cap T^{-k}H) \to P(G)P(H) \quad \text{ as } k \to \infty 
+$$
+where $T^{-k}H$ is defined as $T^{-k}H = T^{-1}(...T^{-1}(T^{-1} H)...)$ repeated $k$ times. 
+
+Let $\lbrace X_i\rbrace _ {i=-\infty}^{\infty}$ be a two sided sequence of random variables. Let $\mathcal{B}_ {-\infty}^n$ be the sigma algebra generated by $\lbrace X_i\rbrace _ {i=-\infty}^{n}$ and $\mathcal{B}_ {n+k}^\infty$ the sigma algebra generated by $\lbrace X_i \rbrace _ {i=n+k}^{\infty}$. Define the mixing coefficient 
+$$
+	\alpha(k) = \sup_ {n \in \mathbb{Z}} \sup_ {G \in \mathcal{B}_ {-\infty}^n} \sup_ {H \in \mathcal{B}_ {n+k}^\infty} | \Pr(G \cap H) - \Pr(G) \Pr(H)| 
+$$
+$\lbrace X_i \rbrace$ is $\mathbb{\alpha}$**-mixing** if $\alpha(k) \to 0$ if $k \to \infty$.
+
+> Note that mixing implies ergodicity.
+
+
+
+### Stationarity
+
+Let $X_i : \Omega \to \mathbb{R}$ be a (two sided) sequence of random variables with $i \in \mathbb{Z}$. $X_i$ is **strongly stationary** or simply stationary if 
+$$
+	\Pr (X _ {i_ 1} \leq a_ 1 , ... , X _ {i_ k} \leq a_ k ) = \Pr (X _ { i _ {1-s}} \leq a_ 1 , ... , X _ {i _ {k-s}} \leq a_ k)  \quad \text{ for every } i_ 1, ..., i_ k, a_ 1, ..., a_ k, s \in \mathbb{R}.
+$$
+
+Let $X_i : \Omega \to \mathbb{R}$ be a (two sided) sequence of random variables with $i \in \mathbb{Z}$. $X_i$ is **covariance stationary** if $\mathbb{E}[X_i] = \mathbb{E}[X_j]$ for every $i,j$ and $\mathbb{E}[X_i X_j] = \mathbb{E}[X _ {i+k} X _ {j+k}]$ for all $i,j,k$. All of the second moments above are assumed to exist.
+
+Let $X_t : \Omega \to \mathbb{R}$ be a sequence of random variables indexed by $t \in \mathbb{Z}$ such that $\mathbb{E}[|X_t|] < 1$ for each $t$. $X_t$ is a **martingale** if $\mathbb{E} [X _ t |X _ {t-1} , X _ {t-2} , ...] = X _ t$. $X_t$ is a **martingale difference** if $\mathbb{E} [X _ t | X _ {t-1} , X _ {t-2} ,...] = 0$.
+
+
+
+### Gordin's Central Limit Theorem
+
+**Theorem**
+
+Let $\lbrace z_i \rbrace$ be a stationary, $\alpha$-mixing sequence of random variables. If moreover
+
+- $\sum_ {m=1}^\infty \alpha(m)^{\frac{\delta}{2 + \delta}} < \infty$
+- $\mathbb{E}[z_i] = 0$
+- $\mathbb{E}\Big[ ||z_i || ^ {2+\delta} \Big] < \infty$
+
+Then
+$$
+		\sqrt{n} \mathbb{E}_n [z_i] \overset{d}{\to} N(0,\Omega) \quad  \text{ where } \quad  \Omega = \lim _ {n \to \infty} Var(\sqrt{n} \mathbb{E}_n [z_i])
+$$
+
+Let $\Omega_k = \mathbb{E}[ z_i z _ {i+k}']$. Then a necessary condition for Gordin's CLT is covariance summability: $\sum _ {k=1}^\infty \Omega_k < \infty$.
+
+
+
+### Ergodic Central Limit Theorem
+
+**Theorem**
+
+Let $\lbrace z_i \rbrace$ be a stationary, ergodic, martingale difference sequence. Then
+$$
+	\sqrt{n} \mathbb{E}_n [z_i] \overset{d}{\to} N(0,\Omega) \quad  \text{ where } \quad  \Omega = \lim _ {n \to \infty} Var(\sqrt{n}\mathbb{E}_n[z_i])
+$$
+
+
+
+## Asymptotic Properties of Estimators
+
+### Consistency
+
+Let $\lbrace \theta_n \rbrace$ be a sequence of estimators, if
+$$
+	\hat{\theta} \overset{p}{\to} \theta_0
+$$
+then we say $\hat{\theta}$ is a **consistent** estimator of $\theta_0$.
+
+
+
+### Asymptotic Distribution
+
+Let $\lbrace \theta_n \rbrace$ be a sequence of estimators, if
+$$
+	\sqrt{n} (\hat{\theta} - \theta_0) \overset{d}{\to} N(0,V)
+$$
+then we say that $\hat{\theta}$ is $\mathbb{\sqrt{n}}$-**asymptotically distributed** and $V$ is the **asymptotic variance** of $\sqrt{n} (\hat{\theta} - \theta_0)$, denoted as $AVar \Big( \sqrt{n} (\hat{\theta} - \theta_0) \Big)$.
+
+Let $\hat{\theta}$ and $\tilde{\theta}$ be estimators of $\theta_0$ each satisfying asymptotic normality, with asymptotic variances $V = AVar \Big( \sqrt{n} (\hat{\theta} - \theta_0) \Big)$ and $D = AVar \Big( \sqrt{n} (\tilde{\theta} - \theta_0) \Big)$ (these generally depend on the value of $\theta_0$, but we suppress that consideration here). Then
+
+1. $\hat{\theta}$ is **asymptotically efficient** relative to $\tilde{\theta}$ if $D-V$ is positive semidefinite for all $\theta_0$,  
+2. $\hat{\theta}$ and $\tilde{\theta}$ are $\mathbb{\sqrt{n}}$**-equivalent** if $\sqrt{n}(\hat{\theta} - \tilde{\theta}) = o_p(1)$.
+
+
+
+
+## Asymptotic Properties of Test Statistics
+
+### Test Consistency
+
+The **asymptotic size** of a testing procedure is defined as the limiting probability of rejecting $H_0$ when $H_0$ is true. Mathematically, we can write this as $\lim _ {n \to \infty} \Pr_n ( \text{reject } H_0 | H_0)$, where the $n$ subscript indexes the sample size. 
+
+A test is said to be **consistent** against the alternative $H_1$ if the null hypothesis is rejected with probability approaching $1$ when $H_1$ is true: $\lim _ {N \to \infty} \Pr_N (\text{reject } H_0 | H_1) \overset{p}{\to} 1$.
+
+
+
+### Convergence
+
+**Theorem**:
+Suppose that $\sqrt{n}(\hat{\theta} - \theta_0) \overset{d}{\to} N(0, V)$, where $V$ is positive definite. Then for any non-stochastic $Q\times P$ matrix $R$, $Q \leq P$, with rank$( R ) = Q$ 
+$$
+	\sqrt{n} R (\hat{\theta} - \theta_0) \sim N(0, R VR')
+$$
+and 
+$$
+	[\sqrt{n}R(\hat{\theta} - \theta_0)]'[RVR']^{-1}[\sqrt{n}R(\hat{\theta} - \theta_0)] \overset{d}{\to} \chi^2_Q
+$$
+In addition, if $\text{plim} \hat{V} _n = V$, then
+$$
+	[\sqrt{n}R(\hat{\theta} - \theta_0)]'[RVR']^{-1}[\sqrt{n}R(\hat{\theta} - \theta_0)] = (\hat{\theta} - \theta_0)' R'[R (\hat{V} _n/n) R']^{-1}R (\hat{\theta} - \theta_0) \overset{d}{\to} \chi^2_Q 
+$$
+
+
+
+### Wald Statistic
+
+For testing the null hypothesis $H_0: R\theta_0 = r$, where $r$ is a $Q\times1$ random vector, define the **Wald statistic** for testing $H_0$ against $H_1 : R\theta_0 \neq r$ as
+$$
+	W_n = (R\hat{\theta} - r)'[R (\hat{V} _n/n) R']^{-1} (R\hat{\theta} - r)
+$$
+Under $H_0$, $W_n \overset{d}{\to} \chi^2_Q$. If we abuse the asymptotics and we treat $\hat{\theta}$ as being distributed as Normal we get the equation exactly.
