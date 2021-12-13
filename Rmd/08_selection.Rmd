@@ -89,7 +89,7 @@ We cannot run OLS because $p \geq n$, thus the rank condition is violated.
 
 We define the **Lasso estimator** as
 $$
-	\hat{\beta}_L = \arg \min \quad \underbrace{\mathbb E_n \Big[ (y_i - x_i' \beta)^2 \Big]}_{\text{SSR term}} + \underbrace{\frac{\lambda}{n} \sum_{j=1}^{P} | \beta_j |}_{\text{Penalty term}}
+\hat{\beta}_L = \arg \min \quad \underbrace{\mathbb E_n \Big[ (y_i - x_i' \beta)^2 \Big]} _ {\text{SSR term}} + \underbrace{\frac{\lambda}{n} \sum _ {j=1}^{P} | \beta_j |} _ {\text{Penalty term}}
 $$
 where  $\lambda$ is called **penalty parameter**.
 
@@ -112,7 +112,7 @@ The shrinkage to zero of the coefficients directly follows from the $|| \cdot ||
 
 ### Sparsity
 
-Let $S_0 = \lbrace j: \beta_{0,j} \ne 0 \rbrace$, we define $s_0 = \# S_0$ as the **sparsity** of $\beta_0$. If $s_0/n \to 0$, we are dealing with a **sparse regression** (analogous of smooth regression).
+Let $S_0 = \lbrace j: \beta_{0,j} \ne 0 \rbrace$, we define $s_0 = |S_0|$ as the **sparsity** of $\beta_0$. If $s_0/n \to 0$, we are dealing with a **sparse regression** (analogous of smooth regression).
 
 > Remark on sparsity:
 >
@@ -128,6 +128,7 @@ $$
 ### Lasso Theorem
 
 **Theorem**
+
 Suppose that for data $D_n = (y_i, x_i)_{i=1}^N$ with $y_i = x_i' \beta + \varepsilon_i$. Let $\hat{\beta}_L$ be the Lasso estimator. Let $\mathcal{S} = 2 \max_j | \mathbb E[ x_{ij} \varepsilon_i] |$. Suppose $|support(\beta_0) \leq s_0$ (sparsity assumption). Let $c_0 = (\mathcal{S} + \lambda/n )/(-\mathcal{S} + \lambda/n )$. Let
 $$
 	\kappa_{c_0, s_0} = \min_{  d \in \mathbb R^p, A \subseteq \lbrace 1, ... , p \rbrace : |A| \leq s_0 ,  || d_{A^c}|| \leq c_0 || d_A ||_1  }  \sqrt{  \frac{ s_0 d' \mathbb E_n [x_i x_i'] d }{|| d_A ||_1^2}  }
@@ -443,7 +444,9 @@ $$
 
 ### Distribution
 
+We can plot the distribution of the post-double selection estimator against the pre-testing one.
+
 ![](../img/Fig_641.png){width=60%}
 
-Under homoskedasticity, the above estimator achieves the semiparametric efficiency bound.
+> **Remark**: under homoskedasticity, the above estimator achieves the semiparametric efficiency bound.
 
