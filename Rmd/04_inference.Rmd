@@ -71,17 +71,6 @@ It takes as inputs a dataset $D$ and outputs a parameter estimate $\hat \theta$.
 
 
 
-### Properties of Estimators
-
-Suppose you have a statistical model parametrized by $\theta$ and an estimator $\hat{\theta}$. The **bias** of $\hat{\theta}$ relative to $\theta$ is given by
-$$
-Bias _ {\theta} (\hat{\theta}) = \mathbb{E} _ {x|\theta} [\hat{\theta} ] - \theta = \mathbb{E} _ {x|\theta} [\hat{\theta} - \theta]
-$$
-
-Let $\hat{\theta}$ be an estimator for $\theta_0$. We say $\hat{\theta}$ is an **unbiased** estimator for $\theta$ if $\mathbb{E}[\hat{\theta}] = \theta_0$.
-
-
-
 ### Inference
 
 Let $\alpha > 0$ be a small tolerance. Statistical **inference** is a map into subsets of $\mathcal{F}$ given by
@@ -162,6 +151,8 @@ $$
 $$
 A primary goal of test construction is to limit the incidence of Type I error by bounding the size of the test.
 
+> In the dominant approach to hypothesis testing the researcher pre-selects a **significance level** $\alpha \in (0,1)$ and then selects the test so that its size is no larger than $\alpha$. 
+
 
 
 ### Type II Error and Power
@@ -177,6 +168,10 @@ In the dominant approach to hypothesis testing the goal of test construction is 
 ### Statistical Significance
 
 TBD
+
+
+
+### P-Values
 
 
 
@@ -209,7 +204,7 @@ Consider the testing problem $H_0 : \beta_k = c$, where $c$ is a presepecified v
 
 The t-statistic for this problem is defined by
 $$
-t_{k}:=\frac{\hat \beta_{k} - c}{\sigma_{\hat \beta_{k}}}
+t_{k}:=\frac{\hat \beta_{k} - c}{\sigma (\hat \beta_{k})}
 $$
 In the testing procedure above, the sampling distribution under the null $H_0$ is given by
 $$
@@ -219,19 +214,74 @@ Where $t_{n-K}$ denotes the t-distribution with $n-K$ degress of freedom.
 
 
 
+### t-test with Unknown Variance
+
+Consider the testing problem $H_0 : \beta_k = c$, where $c$ is a presepecified value under the null.
+
+The t-statistic for this problem is defined by
+$$
+t_{k}:=\frac{\hat \beta_{k} - c}{\sigma (\hat \beta_{k})}
+$$
+In the testing procedure above, the sampling distribution under the null $H_0$ is given by
+$$
+t_k \sim t_{n-K}
+$$
+Where $t_{n-K}$ denotes the t-distribution with $n-K$ degress of freedom.
+
+
+
+### Wald-test
+
+Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and $r \in \mathbb R^p$  is a restriction vector. 
+
+The Wald statistic for this problem is given by
+$$
+W := \frac{(R \hat \beta-r)^{\prime}(R \hat \beta-r) }{R' \sigma^{2}_{\hat \beta} R}
+$$
+In the testing procedure above, the sampling distribution under the null $H_0$ is given by
+$$
+W \sim \chi^2_{n-K}
+$$
+Where $\chi^2_{n-K}$ denotes the chi-squared distribution with $n-K$ degress of freedom.
+
+
+
+### Comments on the Wald test
+
+- The Wald statistic $W$ is a weighted Euclidean measure of the length of the vector $R \hat \beta-r$
+- The Wald test is intrinsecally 2-sided
+- When $p=1$ then $W = |T|$ , the square of the t-statistic, so hypothesis tests based on $W$ and $|T|$ are equivalent.
+
+
+
 ### F-test
 
-Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a presepecified set of linear combinations and $r \in R^p$  is a restriction vector. 
+Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and $r \in \mathbb R^p$  is a restriction vector.  In case the variance of the estimator $\hat \beta$ is not known, we have to replace it with a consistent estimate $\hat \sigma^2_{\hat \beta}$
 
 The F-statistic for this problem is given by
 $$
-F:=\frac{(R b-r)^{\prime}\left[R\left(X^{\prime} X\right) R^{\prime}\right]^{-1}(R b-r) / p}{s^{2}}
+F := \frac{(R \hat \beta-r)^{\prime}(R \hat \beta-r) / p }{R' \hat \sigma^{2}_{\hat \beta} R}
 $$
 In the testing procedure above, the sampling distribution under the null $H_0$ is given by
 $$
 F \sim F_{p, n-K}
 $$
-Where $F_{p, n-K}$ denotes the t-distribution with $n-K$ degress of freedom.
+Where $F_{p, n-K}$ denotes the F-distribution with $n-K$ degress of freedom, with $p$ restrictions.
+
+
+
+### F-test Equivalence
+
+Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and  $r \in \mathbb R^p$ is a restriction vector. Consider two estimators
+
+- $\hat \beta_U = \arg \min_b \frac{1}{n} (y - X \beta)' (y - X\beta)$
+- $\hat \beta_R = \arg \min_{b : \boldsymbol R' \beta = r} \frac{1}{n} (y - X \beta)' (y - X\beta)$
+
+Then the F statistic is numerically equivalent to the following expression
+$$
+\frac{\left(S S R_{R}-S S R_{U}\right) / p}{S S R_{U} /(n-K)}
+$$
+where SSR is the sum of squared residuals. 
 
 
 
@@ -253,5 +303,48 @@ TBD
 
 ## Asymptotics
 
+### Estimator Properties
+
+Given a sequence of well specified data generating processes $\mathcal F_n$, each indexed by the same parameter space $\Theta$, with $\theta_0$ a component of the true parameter for each $n$. 
+
+Then estimator $\hat \theta$ is
+
+- **unbiased** if $\mathbb E [\hat \theta] = \theta_0$
+- **consistent** if $\hat \theta \overset{p}{\to} \theta_0$
+- **asymptotically normal**  $\sqrt{n} (\hat \theta - \theta_0) \overset{d}{\to} N(0, V)$ for some positive definite $V$
 
 
+
+### Test Consistency
+
+The **asymptotic size** of a testing procedure is defined as the limiting probability of rejecting $H_0$ when $H_0$ is true. Mathematically, we can write this as $\lim _ {n \to \infty} \Pr_n ( \text{reject } H_0 | H_0)$, where the $n$ subscript indexes the sample size. 
+
+A test is said to be **consistent** against the alternative $H_1$ if the null hypothesis is rejected with probability approaching $1$ when $H_1$ is true: $\lim _ {N \to \infty} \Pr_N (\text{reject } H_0 | H_1) \overset{p}{\to} 1$.
+
+
+
+### Convergence
+
+**Theorem**:
+Suppose that $\sqrt{n}(\hat{\theta} - \theta_0) \overset{d}{\to} N(0, V)$, where $V$ is positive definite. Then for any non-stochastic $Q\times P$ matrix $R$, $Q \leq P$, with rank$( R ) = Q$ 
+$$
+\sqrt{n} R (\hat{\theta} - \theta_0) \sim N(0, R VR')
+$$
+and 
+$$
+	[\sqrt{n}R(\hat{\theta} - \theta_0)]'[RVR']^{-1}[\sqrt{n}R(\hat{\theta} - \theta_0)] \overset{d}{\to} \chi^2_Q
+$$
+In addition, if $\text{plim} \hat{V} _n = V$, then
+$$
+(\hat{\theta} - \theta_0)' R'[R (\hat{V} _n/n) R']^{-1}R (\hat{\theta} - \theta_0) \overset{d}{\to} \chi^2_Q
+$$
+
+
+
+### Wald Statistic
+
+For testing the null hypothesis $H_0: R\theta_0 = r$, where $r$ is a $Q\times1$ random vector, define the **Wald statistic** for testing $H_0$ against $H_1 : R\theta_0 \neq r$ as
+$$
+	W_n = (R\hat{\theta} - r)'[R (\hat{V} _n/n) R']^{-1} (R\hat{\theta} - r)
+$$
+Under $H_0$, $W_n \overset{d}{\to} \chi^2_Q$. If we abuse the asymptotics and we treat $\hat{\theta}$ as being distributed as Normal we get the equation exactly.

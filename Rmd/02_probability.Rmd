@@ -311,22 +311,24 @@ $$\tag*{$\blacksquare$}$$
 $$
   \mathbb{E}(Y) = \mathbb{E}_X [\mathbb{E}(Y|X)]
 $$
+> This states that the expectation of the conditional expectation is the unconditional expectation. 
+>
+> In other words the average of the conditional averages is the unconditional average. 
+
 
 
 ### Law of Total Variance
 
 **Theorem** (Law of Total Variance) 
 $$
-		Var(Y) = Var_X (\mathbb{E}[Y |X]) + \mathbb{E}_X [Var(Y|X)] 
+Var(Y) = Var_X (\mathbb{E}[Y |X]) + \mathbb{E}_X [Var(Y|X)]
 $$
 
-Useful distributional results:
+Since variances are always non-negative, the law of total variance implies
+$$
+Var(Y) \geq Var_X (\mathbb{E}[Y |X]) 
+$$
 
-1. $\chi^2_q \sim \sum _ {i=1}^q Z_i^2$ where $Z_i \sim N(0,1)$
-2. $F(n_1 , n_2) \sim \frac{\chi^2 _ {n_1} / n_1}{\chi^2 _ {n_2}/n_2}$
-3. $t_n \sim \frac{Z}{\sqrt{\chi^2 _ n}/n }$
-
-> The $t$ distribution is approximately standard normal but has heavier tails. The approximation is good for $n \geq 30$: $t_{n\geq 30} \sim N(0,1)$ 
 
 
 
@@ -334,9 +336,51 @@ Useful distributional results:
 
 ## Distributions
 
-### Continuous Distributions
+### Normal Distribution
+
+We say that a random variable $Z$ has the **standard normal distribution**, or **Gaussian**, written $Z \sim N(0,1)$, if it has the density
+$$
+\phi(x)=\frac{1}{\sqrt{2 \pi}} \exp \left(-\frac{x^{2}}{2}\right), \quad-\infty<x<\infty
+$$
+If $Z \sim N(0, 1)$ and $X = \mu + \sigma Z$ for $\mu \in \mathbb R$ and $\sigma \geq 0$, then $X$ has a **univariate normal distribution**, written $X \sim N(\mu, \sigma^2)$. By change-of-variables *X* has the density
+$$
+f(x)=\frac{1}{\sqrt{2 \pi \sigma^{2}}} \exp \left(-\frac{(x-\mu)^{2}}{2 \sigma^{2}}\right), \quad-\infty<x<\infty
+$$
 
 
 
 
+### Multinomial Normal Distribution
 
+We say that the *k* -vector *Z* has a **multivariate standard normal distribution**, written $Z \sim N(0, I_k)$ if it has the joint density
+$$
+f(x)=\frac{1}{(2 \pi)^{k / 2}} \exp \left(-\frac{x^{\prime} x}{2}\right), \quad x \in \mathbb{R}^{k}
+$$
+If $Z \sim N(0, I_k)$ and $X = \mu + B Z$, then the *k*-vector $X$ has a **multivariate normal distribution**, written $X \sim N(\mu, \Sigma)$ where $\Sigma = BB' \geq 0$. If $\sigma > 0$, then by change-of-variables $X$ has the joint density function
+$$
+f(x)=\frac{1}{(2 \pi)^{k / 2} \operatorname{det}(\Sigma)^{1 / 2}} \exp \left(-\frac{(x-\mu)^{\prime} \Sigma^{-1}(x-\mu)}{2}\right), \quad x \in \mathbb{R}^{k}
+$$
+
+
+### Properties 
+
+1. The expectation and covariance matrix of $X \sim N(\mu, \Sigma)$ are $\mathbb E [X] = \mu$ and $Var[X]=\Sigma$.
+2. If $(X,Y)$ are multivariate normal, $X$ and $Y$ are uncorrelated if and only if they are independent.
+3. If $X \sim N(\mu, \Sigma)$ and $Y = a + bB$, then $X \sim N(a + B\mu, B \Sigma B')$.
+4. If $X \sim N(0, I_k)$, then $X'X \sim \chi^2_k$, chi-square with $k$ degrees of freedom.
+5. If $X \sim N(0, \Sigma)$ with $\Sigma>0$, then $X' \Sigma X \sim \chi_k$ where $k = \dim (X)$.
+6. If $Z \sim N(0,1)$ and $Q \sim \chi^2_k$ are independent then $\frac{Z}{\sqrt{Q/k}} \sim t_k$, student t with *k* degrees of freedom.
+
+
+
+### Normal Distribution Relatives
+
+These distributions are relatives of the normal distribution
+
+1. $\chi^2_q \sim \sum _ {i=1}^q Z_i^2$ where $Z_i \sim N(0,1)$
+2. $t_n \sim \frac{Z}{\sqrt{\chi^2 _ n}/n }$
+3. $F(n_1 , n_2) \sim \frac{\chi^2 _ {n_1} / n_1}{\chi^2 _ {n_2}/n_2}$
+
+
+
+> The $t$ distribution is approximately standard normal but has heavier tails. The approximation is good for $n \geq 30$: $t_{n\geq 30} \sim N(0,1)$ 

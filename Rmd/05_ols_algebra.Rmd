@@ -79,8 +79,9 @@ A statistical model for regression data is the **Gauss Markov Model** if each of
 	Intuition: no regressor is a linear combination of other regressors.
 	
 4. **Spherical Error Variance**: 
-    -$\mathbb E[\varepsilon_i^2 | x] = \sigma^2 > 0, \ \forall i$
-    -$\mathbb E [\varepsilon_i \varepsilon_j |x ] = 0, \ \forall$ $1 \leq i < j \leq n$
+    
+    - $\mathbb E[\varepsilon_i^2 | x] = \sigma^2 > 0, \ \forall i$
+    - $\mathbb E [\varepsilon_i \varepsilon_j |x ] = 0, \ \forall$ $1 \leq i < j \leq n$
 
 
 
@@ -151,14 +152,14 @@ y = X*β + ε;
 
 The **sum of squared residuals (SSR)** is given by
 $$
-	Q_n (\beta) \equiv   \frac{1}{n} \sum _ {i=1}^n \left( y_i - x_i'\beta \right)^2 = \frac{1}{n} (y - X\beta)' (y - X \beta)
+Q_n (\beta) \equiv   \frac{1}{n} \sum _ {i=1}^n \left( y_i - x_i'\beta \right)^2 = \frac{1}{n} (y - X\beta)' (y - X \beta)
 $$
 
 Consider a dataset $\mathcal{D}$ and define $Q_n(\beta) = \mathbb E_n[(y_i - x_i'\beta )^2 ]$. Then the **ordinary least squares (OLS)** estimator $\hat \beta _ {OLS}$ is the value of $\beta$ that minimizes $Q_n(\beta)$.
 
 When we can write $D = (y, X)$ in matrix form, then 
 $$
-  \hat \beta _ {OLS} = \arg \min_\beta \frac{1}{n} (y - X \beta)' (y - X\beta)
+\hat \beta _ {OLS} = \arg \min_\beta \frac{1}{n} (y - X \beta)' (y - X\beta)
 $$
 
 ### Derivation
