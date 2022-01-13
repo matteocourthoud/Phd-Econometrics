@@ -1,0 +1,205 @@
+---
+title: "Inference"
+author: "Matteo Courthoud"
+type: book
+weight: 4
+date: 2021-10-29
+bibliography: references.bib
+link-citations: true
+output: 
+  ioslides_presentation:
+    widescreen: true
+    smaller: true
+    transition: 0
+    slide_level: 3
+    css: custom.css
+  ml_notebook: 
+    toc: true
+    toc_depth: 2
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    toc_collapsed: true
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+---
+
+## Statistical Models
+
+### Definition
+
+A **statistical model** is a set of probability distributions $\lbrace P \rbrace$. 
+
+More precisely, a **statistical model over data** $D \in \mathcal{D}$ is a set of probability distribution over datasets $D$ which takes values in $\mathcal{D}$.
+
+Suppose you have regression data $\lbrace x_i , y_i \rbrace _ {i=1}^N$ with $\mathbb{x}_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. The statistical model is
+
+$$
+\Big\lbrace   P : y_i =  (x_i) + \varepsilon_i, \ x_i \sim F_x , \ \varepsilon_i \sim F _\varepsilon , \ \varepsilon_i \perp x_i , \ f \in C^2 (\mathbb{R}^p) \Big\rbrace
+$$
+
+> **In words**: the statistical model is the set of distributions $P$ such that an additive decomposition of $y_i$ as $f(x_i) + \varepsilon_i$ exists for some $x_i$; where $f$ is twice continuously differentiable.
+
+
+
+### Parametrization
+
+A statistical model parameterized by $\theta \in \Theta$ is **well specified** if the data generating process corresponds to some $\theta_0$ and $\theta_0 \in \Theta$. Otherwise, the statistical model is **misspecified**.
+
+A statistical model can be parametrized as $\mathcal{F} = \lbrace   P_\theta \rbrace _ {\lbrace \theta \in \Theta \rbrace }$. 
+
+- **Parametric**: the stochastic features of the model are completly specified up to a finite dimensional parameter: $\lbrace   P_\theta \rbrace _ { \lbrace   \theta \in \Theta \rbrace }$ with $\Theta \subseteq \mathbb{R}^k, k<\infty$;
+- **Semiparametric**: it is a partially specified model, e.g.,  $\lbrace   P_\theta \rbrace  _ { \lbrace   \theta \in \Theta, \gamma \in \Gamma \rbrace }$ with $\Theta$ of finite dimension and $\Gamma$ of infinite dimension;
+- **Non parametric**: there is no finite dimensional component of the model. 
+
+
+
+### Linear Model
+
+In a **linear model data** are given by $D_n = \lbrace   (y_i, x _ {i1}, \dots, x _ {ik}) \rbrace _ {i=1}^n \in \mathcal{D}$ where:
+
+- $D_n$ are the observed data;
+- $y_i$ is the dependent variable;
+- $x_ {i1}, \dots, x_ {ik}$ are the regressors including a constant.
+
+
+
+### Estimation
+
+Let $\mathcal{D}$ be the set of possible data realizations. Let $D \in \mathcal{D}$ be your data. Let $\mathcal{F}$ be a statistical model indexed by some parameter $\theta \in \Theta$. Let $\nu$ be a functional $\mathcal{F} \to \mathbb{R}$. An **estimator** is a map 
+$$
+\mathcal{D} \to \mathcal{F} \quad , \quad  D \mapsto \hat{\theta}
+$$
+
+An estimator is a map from the set of data realizations to the set of statistical models.
+
+It takes as inputs a datasets and 
+
+
+
+### Inference
+
+Let $\alpha > 0$ be a small tolerance. Statistical **inference** is a map into subsets of $\mathcal{F}$ given by
+$$
+\mathcal{D} \to \mathcal{G} \subseteq \mathcal{F}: \min _ \theta P_\theta (\mathcal{G} | \theta \in \mathcal{G}) \geq 1-\alpha
+$$
+
+In words
+
+- Inference maps datasets into set of models
+- Such that the probability 
+
+
+
+### DGP
+
+A **data generating process** (DGP) is a single statistical distribution over $\mathcal{D}$.
+
+Suppose you have a statistical model parametrized by $\theta$ and an estimator $\hat{\theta}$. The **bias** of $\hat{\theta}$ relative to $\theta$ is given by
+$$
+Bias _ {\theta} (\hat{\theta}) = \mathbb{E} _ {x|\theta} [\hat{\theta} ] - \theta = \mathbb{E} _ {x|\theta} [\hat{\theta} - \theta]
+$$
+
+Let $\hat{\theta}$ be an estimator for $\theta_0$. We say $\hat{\theta}$ is an **unbiased** estimator for $\theta$ if $\mathbb{E}[\hat{\theta}] = \theta_0$.
+
+
+
+## Hypotesis Testing
+
+### Hypothesis
+
+**Hypothesis tests** attempt to assess whether there is evidence contrary to a proposed restriction.
+
+
+
+Let $\theta = r(\beta)$ be a $q \times 1$ parameter of interest where $r \in \mathbb R^k \to \Omega \subseteq \mathbb R^q$ is some transformation. 
+
+
+
+The **null hypothesis** H0 is the restriction θ = θ0 or β ∈ *B*0.
+
+
+
+The **alternative hypothesis** H1 is the set {θ ∈ Θ : θ ̸= θ0} or 􏰤β∈*B* :β∉*B*0􏰥.
+
+
+
+### Testing
+
+A hypothesis test either accepts the null hypothesis or rejects the null hypothesis in favor of the alter- native hypothesis. We can describe these two decisions as “Accept H0” and “Reject H0”. 
+
+The decision is based on the data and so is a mapping from the sample space to the decision set.
+
+This splits the sample space into two regions *S*0 and *S*1 such that if the observed sample falls into *S*0 we accept H0, while if the sample falls into *S*1 we reject H0. The set *S*0 is called the **acceptance region** and the set *S*1 the **rejection** or **critical region**.
+
+
+
+### Test Statistic
+
+It is convenient to express this mapping as a real-valued function called a **test statistic**
+
+The hypothesis test then consists of the decision rule:
+
+\1. AcceptH0 if*T* ≤*c*.
+
+\2. RejectH0 if*T* >*c*.
+
+
+
+### Errors
+
+There are 2 types of error
+
+1. Rejecting H0 when H0 is true) 
+2. Not rejecting H0 when H0 is false
+
+The probability of a Type I error is called the **size** of the test.
+$$
+P􏰔Reject H0 | H0 true􏰕 = P[T > c | H0 true]. 
+$$
+
+
+We define the **asymptotic size** of the test as the asymptotic probability of a Type I error:
+
+
+
+### Building a Test
+
+In the dominant approach to hypothesis testing the researcher pre-selects a **significance level** α ∈ (0,1) and then selects *c* so the asymptotic size is no larger than α.
+
+
+
+When the asymptotic null distribu- tion *G* is pivotal we accomplish this by setting *c* equal to the 1−α quantile of the distribution *G*.
+
+
+
+We call *c* the **asymptotic critical value** because it has been selected from the asymptotic null distribution. 
+
+
+
+
+
+### Type II Error and Power
+
+
+
+### Statistical Significance
+
+
+
+### t-test
+
+The most common test of the one-dimensional hypothesis H0 : θ = θ0 ∈ R against the alternative H1 : θ ̸= θ0
+
+
+
+### F-test
+
+
+
+**Confidence Intervals**
+
+
+

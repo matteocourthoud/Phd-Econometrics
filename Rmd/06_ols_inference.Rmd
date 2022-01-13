@@ -2,7 +2,7 @@
 title: "OLS Inference"
 author: "Matteo Courthoud"
 type: book
-weight: 5
+weight: 6
 date: 2021-10-29
 bibliography: references.bib
 link-citations: true

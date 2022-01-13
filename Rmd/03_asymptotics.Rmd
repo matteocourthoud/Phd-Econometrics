@@ -34,11 +34,20 @@ A sequence of nonrandom numbers $\lbrace a_n \rbrace$ **converges** to $a$ (has 
 
 A sequence of nonrandom numbers $\lbrace a_n \rbrace$ is **bounded** if and only if there is some $B < \infty$ such that $|a_n| \leq B$ for all $n=1,2,...$ Otherwise, we say that $\lbrace a_n \rbrace$ is unbounded.
 
+
+
+### Big-O and Small-o Notation
+
 A sequence of nonrandom numbers $\lbrace a_n \rbrace$ is $O(N^\delta)$ (at most of order $N^\delta$) if $N^{-\delta} a_n$ is bounded. When $\delta=0$, $a_n$ is bounded, and we also write $a_n = O(1)$ (big oh one).
 
 A sequence of nonrandom numbers $\lbrace a_n \rbrace$ is $o(N^\delta)$ if $N^{-\delta} a_n \to 0$. When $\delta=0$, $a_n$ converges to zero, and we also write $a_n = o(1)$ (little oh one).
 
-> From the definitions, it is clear that if $a_n = o(N^{\delta})$, then $a_n = O(N^\delta)$; in particular, if $a_n = o(1)$, then $a_n = O(1)$. If each element of a sequence of vectors or matrices is $O(N^\delta)$, we say the sequence of vectors or matrices is $O(N^\delta)$, and similarly for $o(N^\delta)$.
+> **Properties**
+>
+> - if $a_n = o(N^{\delta})$, then $a_n = O(N^\delta)$
+> - if $a_n = o(1)$, then $a_n = O(1)$
+> - if each element of a sequence of vectors or matrices is $O(N^\delta)$, we say the sequence of vectors or matrices is $O(N^\delta)$
+> - similarly for $o(N^\delta)$.
 
 
 
@@ -104,7 +113,7 @@ Let $\lbrace X_n \rbrace$ be a sequence of random variables and $c \in \mathbb R
 
 **Theorem**
 
-Let $\lbrace X_n \rbrace$ and $\lbrace Y_n \rbrace$ be two sequences of random variables, $x$ a random variable and $c$ a constant such that $\lbrace X_n \rbrace \overset{d}{\to} X$ and $\lbrace Y_n \rbrace \overset{p}{\to} c$. Then
+Let $\lbrace X_n \rbrace$ and $\lbrace Y_n \rbrace$ be two sequences of random variables, $x$ a random variable and $c \in \mathbb R$ a constant such that $\lbrace X_n \rbrace \overset{d}{\to} X$ and $\lbrace Y_n \rbrace \overset{p}{\to} c$. Then
 
 - $X_n + Y_n \overset{d}{\to} X + c$
 - $X_n \cdot Y_n \overset{d}{\to} X \cdot c$
@@ -139,7 +148,7 @@ $$
 
 
 
-### Proof
+### WLLN Proof
 
 The independence of the random variables implies no correlation between them, and we have that
 $$
@@ -168,10 +177,11 @@ where $\sigma^2 = Var(x_i) = \mathbb{E}[x_i x_i']$ is necessarily positive semid
 
 
 
-### Proof
+### CLT Proof (1)
 
-Suppose $\lbrace x_i \rbrace$ are independent and identically distributed random variables, each with mean $\mu$ and finite variance $\sigma^2$. The sum $x_1 + ... + X_n$ has mean $n \mu$ and variance $n \sigma^2$. Consider the random variable
+Suppose $\lbrace x_i \rbrace$ are independent and identically distributed random variables, each with mean $\mu$ and finite variance $\sigma^2$. The sum $x_1 + ... + X_n$ has mean $n \mu$ and variance $n \sigma^2$. 
 
+Consider the random variable
 $$
 Z_n = \frac{x_1 + ... + X_n - n\mu}{\sqrt{n \sigma^2}} = \sum _ {i=1}^n \frac{x_i - \mu}{\sqrt{n \sigma^2}} = \sum _ {i=1}^n \frac{1}{\sqrt{n}} \tilde x_i
 $$
@@ -181,7 +191,13 @@ $$
 \varphi _ {Z_n} (t) = \varphi _ { \sum _ {i=1}^n \frac{1}{\sqrt{n} } \tilde{x}_i}(t) = \varphi _ {\tilde x_1} \left( \frac{t}{\sqrt{n}} \right) \times ... \times \varphi _ {Y_n} \left( \frac{t}{\sqrt{n}} \right) = \left[ \varphi _ {\tilde x_1} \left( \frac{t}{\sqrt{n}} \right) \right]^n
 $$
 
-where in the last step we used the fact that all of the $\tilde{x}_i$ are identically distributed. The characteristic function of $\tilde{x}_1$ is, by Taylor's theorem,
+where in the last step we used the fact that all of the $\tilde{x}_i$ are identically distributed. 
+
+
+
+### CLT Proof (2)
+
+The characteristic function of $\tilde{x}_1$ is, by Taylor's theorem,
 $$
 	\varphi _ {\tilde{x}_1} \left( \frac{t}{\sqrt{n}} \right) = 1 - \frac{t^2}{2n} + o \left( \frac{t^2}{n} \right) \qquad \text{ for } n \to \infty
 $$
@@ -215,7 +231,7 @@ where $G = \frac{\partial g( c )}{\partial x}$ is the $J \times K$ matrix of par
 
 > Note that the most common utilization is with the random variable $\mathbb E_n [x_i]$. In fact, under the assumptions of the CLT, we have that
 $$
-  \sqrt{n} \Big[ g \big( \mathbb E_n [x_i] \big) - g(\mu) \Big] \overset{d}{\to} N(0, G \Sigma G')
+\sqrt{n} \Big[ g \big( \mathbb E_n [x_i] \big) - g(\mu) \Big] \overset{d}{\to} N(0, G \Sigma G')
 $$
 
 
@@ -396,7 +412,7 @@ A test is said to be **consistent** against the alternative $H_1$ if the null hy
 **Theorem**:
 Suppose that $\sqrt{n}(\hat{\theta} - \theta_0) \overset{d}{\to} N(0, V)$, where $V$ is positive definite. Then for any non-stochastic $Q\times P$ matrix $R$, $Q \leq P$, with rank$( R ) = Q$ 
 $$
-	\sqrt{n} R (\hat{\theta} - \theta_0) \sim N(0, R VR')
+\sqrt{n} R (\hat{\theta} - \theta_0) \sim N(0, R VR')
 $$
 and 
 $$

@@ -2,7 +2,7 @@
 title: "OLS Algebra"
 author: "Matteo Courthoud"
 type: book
-weight: 4
+weight: 5
 date: 2021-10-29
 bibliography: references.bib
 link-citations: true

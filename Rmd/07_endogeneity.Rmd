@@ -2,7 +2,7 @@
 title: "Endogeneity"
 author: "Matteo Courthoud"
 type: book
-weight: 6
+weight: 7
 date: 2021-10-29
 bibliography: references.bib
 link-citations: true

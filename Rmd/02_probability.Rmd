@@ -38,6 +38,8 @@ A **probability space** is a triple $(\Omega, \mathcal A, P)$ where
 
 The **sample space** $\Omega$ is the space of all possible events.
 
+What is a $\sigma$-algebra and a probability measure?
+
 
 
 ### Sigma Algebra
@@ -59,7 +61,7 @@ $$
 
 ### Probability Measure
 
-A **probability measure** $P$ is a set function with domain $\mathcal A$ and codomain $[0,1]$ such that
+A **probability measure** $P: \mathcal A \to [0,1]$ is a set function with domain $\mathcal A$ and codomain $[0,1]$ such that
 
 1. $P(A) \geq 0 \ \forall A \in \mathcal A$
 2. $P$ is $\sigma$-additive: is $A_n \in \mathcal A$ are pairwise disjoint events ($A_j \cap A_k = \emptyset$ for $j \neq k$), then
@@ -71,6 +73,8 @@ $$
 
 
 ### Properties
+
+Some properties of probability measures
 
 - $P\left(A^{c}\right)=1-P(A)$
 - $P(\emptyset)=0$
@@ -92,19 +96,31 @@ Two events $A$ and $B$ are **independent** if $P(A \cap B)=P(A) P(B)$.
 
 
 
-### Theorems
+### Law of Total Probability
 
-**Theorem** (Law of Total Probability):
+**Theorem** (Law of Total Probability)
+
 Let $(E_n) _ {n \geq 1}$ be a finite or countable partition of $\Omega$. Then, if $A \in \mathcal A$, 
 $$
   P(A) = \sum_n P(A | E_n ) P(E_n)
 $$
 
-**Theorem** (Bayes Theorem):
+
+
+### Bayes Theorem
+
+**Theorem** (Bayes Theorem)
+
 Let $(E_n) _ {n \geq 1}$ be a finite or countable partition of $\Omega$, and suppose $P(A) > 0$. Then, 
 $$
   P(E_n | A) = \frac{P(A | E_n) P(E_n)}{\sum_m P(A | E_m) P(E_m)}
 $$
+
+For a single event $E \in \Omega$,
+$$
+P(E|A) = \frac{P(A|E) P(E)}{P(A)}
+$$
+
 
 
 
@@ -119,6 +135,8 @@ $$
 
 > The measurability condition states that the inverse image is a measurable set of $\Omega$ i.e. $X^{-1}(B) \in \mathcal A$. This is essential since probabilities are defined only on $\mathcal A$.
 
+In words, a random variable it's a mapping from events to real numbers such that each interval on the real line can be mapped back into an element of the sigma algebra (it can be the empty set).
+
 
 
 ### Distribution Function
@@ -128,11 +146,12 @@ $$
 	F_X(x) = \Pr(X \leq x)
 $$
 
-> Properties
+> **Properties**
 >
-- $F$ is monotone non-decreasing
-- $F$ is right continuous
-- $\lim _ {x \to - \infty} F(x)=0$ and $\lim _ {x \to + \infty} F(x)=1$
+> - $F$ is monotone non-decreasing
+> - $F$ is right continuous
+> - $\lim _ {x \to - \infty} F(x)=0$ and $\lim _ {x \to + \infty} F(x)=1$
+
 
 The random variables $(X_1, .. , X_n)$ are independent if and only if
 $$
@@ -167,7 +186,7 @@ $$
 
 The **empirical expectation** (or **sample average**) is given by
 $$
-		\mathbb{E}_n [z_i] = \frac{1}{n} \sum _ {i=1}^N z_i 
+\mathbb{E}_n [x_i] = \frac{1}{n} \sum _ {i=1}^N x_i
 $$
 
 
@@ -179,6 +198,8 @@ $$
 	Cov(X, Y ) = \mathbb{E}[ (X - \mathbb{E}[ X ]) (Y - \mathbb{E}[ Y ]) ]  = \mathbb{E}[XY ] - \mathbb{E}[ X ]E[ Y ]
 $$
 In vector notation, $Cov(X, Y) = \mathbb{E}[XY']  - \mathbb{E}[ X ]\mathbb{E}[Y']$.
+
+
 
 The **variance** of a random variable $X$, when it exists, is given by
 $$
@@ -198,7 +219,7 @@ Let $X, Y, Z, T \in \mathcal{L}^{2}$ and $a, b, c, d \in \mathbb{R}$
 - $Cov(X+Z, Y) = Cov(X,Y) + Cov(Z,Y)$
 - $Cov(aX + bZ, cY + dT) = ac * Cov(X,Y) + ad * Cov(X,T) + bc * Cov(Z,Y) + bd * Cov(Z,T)$
 
-Let $X, Y \in \mathcal L^1$ be independent. Then, $\mathbb E[XY] = \mathbb E[ X ]E[ Y ]$.
+Let $X, Y \in \mathcal L^1$ be independent. Then, $\mathbb E[XY] = \mathbb E[ X ] \mathbb E[ Y ]$.
 
 If $X$ and $Y$ are independent, then $Cov(X,Y) = 0$.
 
@@ -210,9 +231,9 @@ If $X$ and $Y$ are independent, then $Cov(X,Y) = 0$.
 
 The **sample variance** is given by
 $$
-	Var_n (z_i) = \frac{1}{n} \sum _ {i=1}^N (z_i - \bar{z})^2 
+Var_n (x_i) = \frac{1}{n} \sum _ {i=1}^N (x_i - \bar{x})^2
 $$
-where $\bar{z_i} = \mathbb{E}_n [z_i] = \frac{1}{n} \sum _ {i=1}^N z_i$.
+where $\bar{x_i} = \mathbb{E}_n [x_i] = \frac{1}{n} \sum _ {i=1}^N x_i$.
 
 
 
@@ -242,33 +263,59 @@ $$\tag*{$\blacksquare$}$$
 ### Inequalities
 
 - **Triangle Inequality**: if $\mathbb{E} [ X ] < \infty$, then 
- $$|\mathbb{E} [ X ] | \leq \mathbb{E} [|X|]$$
+ $$
+ |\mathbb{E} [ X ] | \leq \mathbb{E} [|X|]
+ $$
+ 
+ 
 - **Markov's Inequality**: if $\mathbb{E}[ X ] < \infty$, then 
- $$ \Pr(|X| > t) \leq \frac{1}{t} \mathbb{E}[|X|] $$
+ $$
+ \Pr(|X| > t) \leq \frac{1}{t} \mathbb{E}[|X|]
+ $$
+ 
+ 
 - **Chebyshev's Inequality**: if $\mathbb{E}[X^2] < \infty$,  then 
- $$ \Pr(|X- \mu|> t \sigma) \leq \frac{1}{t^2}\Leftrightarrow \Pr(|X- \mu|> t ) \leq \frac{\sigma^2}{t^2} $$
+ $$
+ \Pr(|X- \mu|> t \sigma) \leq \frac{1}{t^2}\Leftrightarrow \Pr(|X- \mu|> t ) \leq \frac{\sigma^2}{t^2} 
+ $$
+ 
+ 
 - **Cauchy-Schwarz's Inequality**:
- $$ \mathbb{E} [|XY|] \leq \sqrt{\mathbb{E}[X^2] \mathbb{E}[Y^2]} $$
+ $$
+ \mathbb{E} [|XY|] \leq \sqrt{\mathbb{E}[X^2] \mathbb{E}[Y^2]}
+ $$
+ 
+ 
 - **Minkowski Inequality**: 
- $$ \left( \sum _ {k=1}^n | x_k + y_k |^p \right) ^ {\frac{1}{p}} \leq \left( \sum _ {k=1}^n | x_k |^p \right) ^ {\frac{1}{p}} + \left( \sum _ {k=1}^n | y_k | ^p \right) ^ { \frac{1}{p} } $$
+ $$
+ \left( \sum _ {k=1}^n | x_k + y_k |^p \right) ^ {\frac{1}{p}} \leq \left( \sum _ {k=1}^n | x_k |^p \right) ^ {\frac{1}{p}} + \left( \sum _ {k=1}^n | y_k | ^p \right) ^ { \frac{1}{p} } 
+ $$
+ 
+ 
 - **Jensen's Inequality**: if $g( \cdot)$ is concave (e.g. logarithmic function), then 
- $$ \mathbb{E}[g(x)] \leq g(\mathbb{E}[ X ]) $$ 
+ $$
+  \mathbb{E}[g(x)] \leq g(\mathbb{E}[ X ])
+  $$
   Similarly, if $g(\cdot)$ is convex (e.g. exponential function), then 
-  $$ \mathbb{E}[g(x)] \geq g(\mathbb{E}[ X ]) $$
+  $$
+  \mathbb{E}[g(x)] \geq g(\mathbb{E}[ X ])
+  $$
 
 
 
 
 
-### Theorems
+### Law of Iterated Expectations
 
-**Theorem**: 
-Law of Iterated Expectations
+**Theorem** (Law of Iterated Expectations) 
 $$
   \mathbb{E}(Y) = \mathbb{E}_X [\mathbb{E}(Y|X)]
 $$
-**Theorem**: 
-Law of Total Variance
+
+
+### Law of Total Variance
+
+**Theorem** (Law of Total Variance) 
 $$
 		Var(Y) = Var_X (\mathbb{E}[Y |X]) + \mathbb{E}_X [Var(Y|X)] 
 $$
@@ -281,66 +328,15 @@ Useful distributional results:
 
 > The $t$ distribution is approximately standard normal but has heavier tails. The approximation is good for $n \geq 30$: $t_{n\geq 30} \sim N(0,1)$ 
 
-## Statistical Models
-
-### Definition
-
-A **statistical model** is a set of probability distributions. More precisely, a **statistical model over data** $D \in \mathcal{D}$ is a set of probability distribution over datasets $D$ which takes values in $\mathcal{D}$.
-
-Suppose you have regression data $\lbrace \mathbb{x}_i , y_i \rbrace _ {i=1}^N$ with $\mathbb{x}_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. The statistical model is
-
-$$
- \Big\lbrace   P : y_i =  f(\mathbb{x}_i) + \varepsilon_i, \ x_i \sim F_x , \ \varepsilon_i \sim F _\varepsilon , \ \varepsilon_i \perp \mathbb{x}_i , \ f \in C^2 (\mathbb{R}^p) \Big\rbrace 
-$$
-
-> In words: the statistical model is the set of distributions $P$ such that an additive decomposition of $y_i$ as $f(\mathbb{x}_i) + \varepsilon_i$ exists for some $\mathbb{x}_i$; where $f$ is twice continuously differentiable.
-
-A statistical model parameterized by $\theta \in \Theta$ is **well specified** if the data generating process corresponds to some $\theta_0$ and $\theta_0 \in \Theta$. Otherwise, the statistical model is **misspecified**.
-
-A statistical model can be parametrized as $\mathcal{F} = \lbrace   P_\theta \rbrace _ {\lbrace \theta \in \Theta \rbrace }$. 
 
 
 
-### Categories of Statistical Models
 
-- **Parametric**: the stochastic features of the model are completly specified up to a finite dimensional parameter: $\lbrace   P_\theta \rbrace _ { \lbrace   \theta \in \Theta \rbrace }$ with $\Theta \subseteq \mathbb{R}^k, k<\infty$;
-- **Semiparametric**: it is a partially specified model, e.g.,  $\lbrace   P_\theta \rbrace  _ { \lbrace   \theta \in \Theta, \gamma \in \Gamma \rbrace }$ with $\Theta$ of finite dimension and $\Gamma$ of infinite dimension;
-- **Non parametric**: there is no finite dimensional component of the model. 
+## Distributions
 
-
-
-### Linear Model
-
-In a **linear model data** are given by $D_n = \lbrace   (y_i, x _ {i1}, \dots, x _ {ik}) \rbrace _ {i=1}^n \in \mathcal{D}$ where:
-
-- $D_n$ are the observed data;
-- $y_i$ is the dependent variable;
-- $x_ {i1}, \dots, x_ {ik}$ are the regressors including a constant.
+### Continuous Distributions
 
 
 
-### Estimation and Inference
 
-Let $\mathcal{D}$ be the set of possible data realizations. Let $D \in \mathcal{D}$ be your data. Let $\mathcal{F}$ be a statistical model indexed by $\theta$. Let $\nu$ be a functional $\mathcal{F} \to \mathbb{R}$. Let $\alpha > 0$ be a small tolerance. An **estimator** is a map 
-$$
-		\mathcal{D} \to \mathcal{F} \quad , \quad  D \mapsto \hat{\theta} \qquad \text{ or } \qquad \mathcal{D} \to \mathbb{R} \quad , \quad D \mapsto \hat{\nu}
-$$
-
-Statistical **inference** is a map into subsets of $\mathcal{F}$ given by
-$$
-  \mathcal{D} \to \mathcal{G} \subseteq \mathcal{F}: \min _ \theta P_\theta (\mathcal{G} | \theta \in \mathcal{G}) \geq 1-\alpha  \qquad \text{ or } \qquad \mathcal{D} \to A \subseteq \mathbb{R}: \min _ \theta P_\theta (A | \nu(\theta) \in A) \geq 1-\alpha
-$$
-
-
-
-### DGP
-
-A **data generating process** (DGP) is a single statistical distribution over $\mathcal{D}$.
-
-Suppose you have a statistical model parametrized by $\theta$ and an estimator $\hat{\theta}$. The **bias** of $\hat{\theta}$ relative to $\theta$ is given by
-$$
-	Bias _ {\theta} (\hat{\theta}) = \mathbb{E} _ {x|\theta} [\hat{\theta} ] - \theta = \mathbb{E} _ {x|\theta} [\hat{\theta} - \theta]
-$$
-
-Let $\hat{\theta}$ be an estimator for $\theta_0$. We say $\hat{\theta}$ is an **unbiased** estimator for $\theta$ if $\mathbb{E}[\hat{\theta}] = \theta_0$.
 

@@ -2,7 +2,7 @@
 title: "Variable Selection"
 author: "Matteo Courthoud"
 type: book
-weight: 8
+weight: 9
 date: 2021-10-29
 bibliography: references.bib
 link-citations: true

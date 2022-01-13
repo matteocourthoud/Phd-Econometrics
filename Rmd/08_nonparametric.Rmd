@@ -2,7 +2,7 @@
 title: "Non-Parametric Estimation"
 author: "Matteo Courthoud"
 type: book
-weight: 7
+weight: 8
 date: 2021-10-29
 bibliography: references.bib
 link-citations: true
