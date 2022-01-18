@@ -34,7 +34,7 @@ A **statistical model** is a set of probability distributions $\lbrace P \rbrace
 
 More precisely, a **statistical model over data** $D \in \mathcal{D}$ is a set of probability distribution over datasets $D$ which takes values in $\mathcal{D}$.
 
-Suppose you have regression data $\lbrace x_i , y_i \rbrace _ {i=1}^N$ with $\mathbb{x}_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. The statistical model is
+Suppose you have regression data $\lbrace x_i , y_i \rbrace _ {i=1}^N$ with $x_i \in \mathbb{R}^p$ and $y_i \in \mathbb{R}$. The statistical model is
 
 $$
 \Big\lbrace   P : y_i = f(x_i) + \varepsilon_i, \ x_i \sim F_x , \ \varepsilon_i \sim F _\varepsilon , \ \varepsilon_i \perp x_i , \ f \in C^2 (\mathbb{R}^p) \Big\rbrace
@@ -44,15 +44,21 @@ $$
 
 
 
+A **data generating process** (DGP) is a single statistical distribution over 
+
+
+
 ### Parametrization
 
 A statistical model parameterized by $\theta \in \Theta$ is **well specified** if the data generating process corresponds to some $\theta_0$ and $\theta_0 \in \Theta$. Otherwise, the statistical model is **misspecified**.
 
 A statistical model can be parametrized as $\mathcal{F} = \lbrace   P_\theta \rbrace _ {\lbrace \theta \in \Theta \rbrace }$. 
 
-We can class statistical models into 3 classes
+We can divide statistical models into 3 classes
 
-- **Parametric**: the stochastic features of the model are completly specified up to a finite dimensional parameter: $\lbrace   P_\theta \rbrace _ { \lbrace   \theta \in \Theta \rbrace }$ with $\Theta \subseteq \mathbb{R}^k, k<\infty$;
+- **Parametric**: the stochastic features of the model are completly specified up to a finite dimensional parameter: $\lbrace   P_\theta \rbrace _ { \lbrace   \theta \in \Theta \rbrace }$ with $\Theta \subseteq \mathbb{R}^k, k<\infty$;	
+  - 
+
 - **Semiparametric**: it is a partially specified model, e.g.,  $\lbrace   P_\theta \rbrace  _ { \lbrace   \theta \in \Theta, \gamma \in \Gamma \rbrace }$ with $\Theta$ of finite dimension and $\Gamma$ of infinite dimension;
 - **Non parametric**: there is no finite dimensional component of the model. 
 
@@ -65,9 +71,10 @@ $$
 \mathcal{D} \to \mathcal{F} \quad , \quad  D \mapsto \hat{\theta}
 $$
 
-An estimator is a map from the set of data realizations to the set of statistical models.
-
-It takes as inputs a dataset $D$ and outputs a parameter estimate $\hat \theta$.
+> **In words**:
+>
+> - An estimator is a map from the set of data realizations to the set of statistical models.
+> - It takes as inputs a dataset $D$ and outputs a parameter estimate $\hat \theta$.
 
 
 
@@ -83,12 +90,6 @@ $$
 > - Inference maps datasets into sets of models
 > - The set contains only models that generate the observed data with high probability
 > - I.e. at least $1-\alpha$
-
-
-
-### DGP
-
-A **data generating process** (DGP) is a single statistical distribution over $\mathcal{D}$.
 
 
 
@@ -161,7 +162,9 @@ Test **power** is the probability of a Type II error, i.e.
 $$
 \Pr \Big[ \text{ Not Reject } H_0 \Big| H_0 \text{ is false } \Big] = \Pr \Big[ T(D)=0 \Big| P \in \mathcal K^C \Big]
 $$
-In the dominant approach to hypothesis testing the goal of test construction is to have high power subject to the constraint that the size of the test is lower than the pre-specified significance level.
+
+
+> In the dominant approach to hypothesis testing the goal of test construction is to have high power subject to the constraint that the size of the test is lower than the pre-specified significance level.
 
 
 
@@ -191,36 +194,36 @@ We now summarize the main features of hypothesis testing.
 
 ### Examples
 
-Let's focus three hypotheses:
+Let's focus two hypotheses:
 
 1. $\beta_k = c \in \mathbb R$
 2. $\boldsymbol R' \beta = r \in \mathbb R^p$
 
 
 
-### t-test
+### t-test with Known Variance
 
-Consider the testing problem $H_0 : \beta_k = c$, where $c$ is a presepecified value under the null.
+Consider the testing problem $H_0 : \beta_k = c$, where $c$ is a pre-specified value under the null. Suppose the variance of the esimator $\hat \beta_k$ is **known**.
 
 The t-statistic for this problem is defined by
 $$
-t_{k}:=\frac{\hat \beta_{k} - c}{\sigma (\hat \beta_{k})}
+n_{k}:=\frac{\hat \beta_{k} - c}{\sigma_{\hat \beta_{k}}}
 $$
 In the testing procedure above, the sampling distribution under the null $H_0$ is given by
 $$
-t_k \sim t_{n-K}
+n_k \sim N(0,1)
 $$
-Where $t_{n-K}$ denotes the t-distribution with $n-K$ degress of freedom.
+Where $N(0,1)$ the standard normal distribution.
 
 
 
 ### t-test with Unknown Variance
 
-Consider the testing problem $H_0 : \beta_k = c$, where $c$ is a presepecified value under the null.
+Consider the testing problem $H_0 : \beta_k = c$, where $c$ is a presepecified value under the null. In case the variance of the estimator $\hat \beta_k$ is **not known**, we have to replace it with a consistent estimate $\hat \sigma^2_{\hat \beta}$
 
 The t-statistic for this problem is defined by
 $$
-t_{k}:=\frac{\hat \beta_{k} - c}{\sigma (\hat \beta_{k})}
+t_{k}:=\frac{\hat \beta_{k} - c}{\hat \sigma_{\hat \beta_{k}}}
 $$
 In the testing procedure above, the sampling distribution under the null $H_0$ is given by
 $$
@@ -232,7 +235,7 @@ Where $t_{n-K}$ denotes the t-distribution with $n-K$ degress of freedom.
 
 ### Wald-test
 
-Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and $r \in \mathbb R^p$  is a restriction vector. 
+Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and $r \in \mathbb R^p$  is a restriction vector.  Suppose the variance of the esimator $\hat \beta$ is **known**.
 
 The Wald statistic for this problem is given by
 $$
@@ -256,11 +259,11 @@ Where $\chi^2_{n-K}$ denotes the chi-squared distribution with $n-K$ degress of 
 
 ### F-test
 
-Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and $r \in \mathbb R^p$  is a restriction vector.  In case the variance of the estimator $\hat \beta$ is not known, we have to replace it with a consistent estimate $\hat \sigma^2_{\hat \beta}$
+Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \in \mathbb R^{p+K}$ is a pre-specified set of linear combinations and $r \in \mathbb R^p$  is a restriction vector.  In case the variance of the estimator $\hat \beta$ is **not known**, we have to replace it with a consistent estimate $\hat \sigma^2_{\hat \beta}$.
 
 The F-statistic for this problem is given by
 $$
-F := \frac{(R \hat \beta-r)^{\prime}(R \hat \beta-r) / p }{R' \hat \sigma^{2}_{\hat \beta} R}
+F := \frac{(R \hat \beta-r)^{\prime}(R \hat \beta-r) / p }{R' \hat \sigma^{2} _ {\hat \beta} R}
 $$
 In the testing procedure above, the sampling distribution under the null $H_0$ is given by
 $$
@@ -279,7 +282,7 @@ Consider the testing problem $\boldsymbol R' \beta = r$, where $\boldsymbol R  \
 
 Then the F statistic is numerically equivalent to the following expression
 $$
-\frac{\left(S S R_{R}-S S R_{U}\right) / p}{S S R_{U} /(n-K)}
+F = \frac{\left(S S R_{R}-S S R_{U}\right) / p}{S S R_{U} /(n-K)}
 $$
 where SSR is the sum of squared residuals. 
 
